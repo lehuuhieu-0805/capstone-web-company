@@ -3,10 +3,13 @@ import { Avatar, Box, Divider, IconButton, MenuItem, Stack, Typography } from '@
 import { alpha } from '@mui/material/styles';
 import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // components
 import MenuPopover from '../../components/MenuPopover';
 import { unSubscribeToTopic } from '../../utils/firebase';
+import { reset as resetCompany } from '../../slices/companySlice';
+import { reset as resetPremium } from '../../slices/premiumSlice';
+import { reset as resetMoney } from '../../slices/moneySlice';
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +39,7 @@ let MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover({ company }) {
+  const dispatch = useDispatch();
   const anchorRef = useRef(null);
 
   const [open, setOpen] = useState(null);
@@ -138,12 +142,15 @@ export default function AccountPopover({ company }) {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={() => {
-         
-          (async () => {
-            unSubscribeToTopic(`${localStorage.getItem('company_id')}`);
 
-          })();
+          unSubscribeToTopic(`${localStorage.getItem('company_id')}`);
           localStorage.clear();
+          let action = resetCompany();
+          dispatch(action);
+          action = resetPremium();
+          dispatch(action);
+          action = resetMoney();
+          dispatch(action);
           navigate('/login');
         }} sx={{ m: 1 }}>
           Đăng xuất

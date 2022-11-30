@@ -17,6 +17,7 @@ import draftToHtml from 'draftjs-to-html';
 // import htmlToDraft from 'html-to-draftjs';
 import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { Link as RouterLink, useLocation, useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 import ModalImage from 'react-modal-image';
@@ -28,6 +29,7 @@ import Page from '../components/Page';
 import TabPanel from '../components/TabPanel';
 import { api, common } from '../constants';
 import TableListJobPost from '../sections/@dashboard/jobpost/TableListJobPost';
+import { minusMoney } from '../slices/moneySlice';
 import '../index.css';
 
 
@@ -115,7 +117,7 @@ export default function CreateJobPost() {
     }
   }, []);
 
-  console.log(listSkillLevel, skillLevel);
+  const dispatch = useDispatch();
 
   dayjs.extend(isSameOrBefore);
 
@@ -570,6 +572,8 @@ export default function CreateJobPost() {
                 setOpenAlert(true);
                 setSeverity('success');
                 setMessageAlert('Tạo bài viết tuyển dụng thành công');
+                const action = minusMoney(money.replaceAll('.', ''));
+                dispatch(action);
                 navigate('/dashboard/job-post');
               }).catch(error => console.log(error));
             }
@@ -580,6 +584,8 @@ export default function CreateJobPost() {
             setOpenAlert(true);
             setSeverity('error');
             setMessageAlert('Tạo bài viết tuyển dụng thất bại');
+            const action = minusMoney(money.replaceAll('.', ''));
+            dispatch(action);
             navigate('/dashboard/job-post');
           });
         }
