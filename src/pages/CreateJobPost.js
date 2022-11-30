@@ -574,7 +574,7 @@ export default function CreateJobPost() {
                 setMessageAlert('Tạo bài viết tuyển dụng thành công');
                 const action = minusMoney(money.replaceAll('.', ''));
                 dispatch(action);
-                navigate('/dashboard/job-post');
+                navigate('/dashboard/job-post?status=created');
               }).catch(error => console.log(error));
             }
 
@@ -586,7 +586,7 @@ export default function CreateJobPost() {
             setMessageAlert('Tạo bài viết tuyển dụng thất bại');
             const action = minusMoney(money.replaceAll('.', ''));
             dispatch(action);
-            navigate('/dashboard/job-post');
+            navigate('/dashboard/job-post?status=create-failed');
           });
         }
       }).catch(error => console.log(error));
@@ -644,10 +644,10 @@ export default function CreateJobPost() {
 
         if (listFileImage.length === 0) {
           setLoadingButton(false);
-          setOpenAlert(true);
-          setSeverity('success');
-          setMessageAlert('Chỉnh sửa bài viết tuyển dụng thành công');
-          navigate('/dashboard/job-post');
+          // setOpenAlert(true);
+          // setSeverity('success');
+          // setMessageAlert('Chỉnh sửa bài viết tuyển dụng thành công');
+          navigate('/dashboard/job-post?status=updated');
         } else {
           oldFileUrlImage.forEach((item) => {
             axios({
@@ -675,10 +675,10 @@ export default function CreateJobPost() {
             data: formData
           }).then(() => {
             setLoadingButton(false);
-            setOpenAlert(true);
-            setSeverity('success');
-            setMessageAlert('Chỉnh sửa bài viết tuyển dụng thành công');
-            // navigate('/dashboard/job-post');
+            // setOpenAlert(true);
+            // setSeverity('success');
+            // setMessageAlert('Chỉnh sửa bài viết tuyển dụng thành công');
+            navigate('/dashboard/job-post?status=updated');
 
           }).catch(error => console.log(error));
         }
@@ -686,10 +686,10 @@ export default function CreateJobPost() {
       }).catch(error => {
         console.log(error);
         setLoadingButton(false);
-        setOpenAlert(true);
-        setSeverity('error');
-        setMessageAlert('Chỉnh sửa bài viết tuyển dụng thất bại');
-        navigate('/dashboard/job-post');
+        // setOpenAlert(true);
+        // setSeverity('error');
+        // setMessageAlert('Chỉnh sửa bài viết tuyển dụng thất bại');
+        navigate('/dashboard/job-post?status=update-failed');
       });
     }
 

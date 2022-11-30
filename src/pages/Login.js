@@ -3,13 +3,14 @@ import { Alert, Card, Container, Dialog, DialogActions, DialogContent, DialogCon
 // @mui
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { LoginForm } from '../sections/auth/login';
 import Logo from '../components/Logo';
 // components
 import Page from '../components/Page';
 import { api } from '../constants';
+import { getQueryParams } from '../utils/getQueryParams';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 import AuthSocial from '../sections/auth/AuthSocial';
@@ -74,6 +75,7 @@ export default function Login() {
   const [loadingButtonConfirm, setLoadingButtonConfirm] = useState(false);
   const [disableButtonConfirm, setDisableButtonConfirm] = useState(true);
   // const [openBackdrop, setOpenBackdrop] = useState(false);
+  const getQueryParam = getQueryParams();
 
   const smUp = useResponsive('up', 'sm');
 
@@ -105,6 +107,14 @@ export default function Login() {
       setOpenAlert(true);
     }
   };
+
+  useEffect(() => {
+    if (getQueryParam?.status === 'verified') {
+      setSeverity('success');
+      setMessageAlert('Xác thực email thành công');
+      setOpenAlert(true);
+    }
+  }, [getQueryParam?.status]);
 
 
   return (

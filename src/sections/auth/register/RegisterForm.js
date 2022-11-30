@@ -388,14 +388,15 @@ export default function RegisterForm() {
                 //   Authorization: `Bearer ${token}`
                 // },
               }).then(() => {
-                setSeverity('success');
-                setMessageAlert('Xác thực email thành công');
-                setOpenAlert(true);
+                // setSeverity('success');
+                // setMessageAlert('Xác thực email thành công');
+                // setOpenAlert(true);
                 reset();
-                setTimeout(() => {
-                  setLoadingButtonConfirm(false);
-                  navigate('/login', { replace: true });
-                }, 3000);
+                // setTimeout(() => {
+                //   setLoadingButtonConfirm(false);
+                //   navigate('/login', { replace: true });
+                // }, 3000);
+                navigate('/login?status=verified');
                 // axios({
                 //   url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_MAIL_TO_ADMIN}?email=${getValues('email')}`,
                 //   method: 'post',

@@ -8,6 +8,7 @@ import { Grid, Container, Typography } from '@mui/material';
 import Page from '../components/Page';
 import { api } from '../constants';
 import Iconify from '../components/Iconify';
+import { getQueryParams } from '../utils/getQueryParams';
 // sections
 import {
   AppTasks,
@@ -20,6 +21,7 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
+import AlertMessage from '../components/AlertMessage';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +32,19 @@ export default function DashboardApp() {
   const [countActiveJobPost, setCountActiveJobPost] = useState(0);
   const [countHiddenJobPost, setCountHiddenJobPost] = useState(0);
   const [countPostingJobPost, setCountPostingJobPost] = useState(0);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [messageAlert, setMessageAlert] = useState('');
+  const [severity, setSeverity] = useState('success');
+
+  const getQueryParam = getQueryParams();
+
+  useEffect(() => {
+    if (getQueryParam?.status === 'logged') {
+      setSeverity('success');
+      setMessageAlert('Đăng nhập thành công');
+      setOpenAlert(true);
+    }
+  }, []);
 
   useEffect(() => {
     axios({
@@ -260,6 +275,8 @@ export default function DashboardApp() {
           </Grid> */}
         </Grid>
       </Container>
+
+      <AlertMessage openAlert={openAlert} setOpenAlert={setOpenAlert} alertMessage={messageAlert} severity={severity} />
     </Page>
   );
 }

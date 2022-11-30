@@ -124,12 +124,13 @@ export default function LoginForm() {
               localStorage.setItem('user_id', element.id);
               localStorage.setItem('company_id', element.company_id);
               setLoadingButtonLogin(false);
-              setSeverity('success');
-              setMessageAlert('Đăng nhập thành công');
-              setOpenAlert(true);
-              setTimeout(() => {
-                navigate('/dashboard/app', { replace: true });
-              }, 3000);
+              // setSeverity('success');
+              // setMessageAlert('Đăng nhập thành công');
+              // setOpenAlert(true);
+              // setTimeout(() => {
+              //   navigate('/dashboard/app', { replace: true });
+              // }, 3000);
+              navigate('/dashboard/app?status=logged', { replace: true });
             }
           }
         });
@@ -266,12 +267,7 @@ export default function LoginForm() {
                 // },
               }).then(() => {
                 setLoadingButtonDone(false);
-                setSeverity('success');
-                setMessageAlert('Xác thực email thành công');
-                setOpenAlert(true);
-                setTimeout(() => {
-                  navigate(0);
-                }, 3000);
+                window.location.assign('/login?status=verified');
               }).catch(error => {
                 console.log(error);
                 setLoadingButtonDone(false);

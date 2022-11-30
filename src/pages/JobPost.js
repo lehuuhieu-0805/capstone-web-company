@@ -24,6 +24,7 @@ import { addMoney } from '../slices/moneySlice';
 import TabPanel from '../components/TabPanel';
 import { api } from '../constants';
 import TableListJobPost from '../sections/@dashboard/jobpost/TableListJobPost';
+import { getQueryParams } from '../utils/getQueryParams';
 
 
 const schema = yup.object().shape({
@@ -91,6 +92,7 @@ export default function JobPost() {
   const [filterName, setFilterName] = useState('');
 
   const dispatch = useDispatch();
+  const getQueryParam = getQueryParams();
 
   dayjs.extend(isSameOrBefore);
 
@@ -111,6 +113,26 @@ export default function JobPost() {
     control,
     name: 'test'
   });
+
+  useEffect(() => {
+    if (getQueryParam?.status === 'created') {
+      setSeverity('success');
+      setMessageAlert('Tạo bài viết thành công');
+      setOpenAlert(true);
+    } else if (getQueryParam?.status === 'create-failed') {
+      setSeverity('error');
+      setMessageAlert('Tạo bài viết thất bại');
+      setOpenAlert(true);
+    } else if (getQueryParam?.status === 'updated') {
+      setOpenAlert(true);
+      setSeverity('success');
+      setMessageAlert('Chỉnh sửa bài viết tuyển dụng thành công');
+    } else if (getQueryParam?.status === 'update-failed') {
+      setOpenAlert(true);
+      setSeverity('error');
+      setMessageAlert('Chỉnh sửa bài viết tuyển dụng thất bại');
+    }
+  }, []);
 
   useEffect(() => {
     axios({
