@@ -32,6 +32,7 @@ export default function CreateCompany() {
     const { Email } = jwtDecode(token);
     setEmailUser(Email);
   }, []);
+  console.log(1);
 
   useEffect(() => {
     axios({
@@ -41,6 +42,7 @@ export default function CreateCompany() {
       //   Authorization: `Bearer ${token}`,
       // },
     }).then((response) => {
+      console.log(response.data.data);
       setListCompany(response.data.data);
     }).catch(error => console.log(error));
   }, []);

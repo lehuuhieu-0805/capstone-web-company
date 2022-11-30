@@ -65,7 +65,7 @@ export default function DashboardLayout() {
 
   return (
     <>
-      {company ? (
+      {/* {company ? (
         <RootStyle>
           <DashboardNavbar company={company} onOpenSidebar={() => setOpen(true)} />
           <DashboardSidebar company={company} isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
@@ -77,14 +77,14 @@ export default function DashboardLayout() {
         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={openBackDrop}>
           <CircularProgress color='inherit' />
         </Backdrop>
-      }
-      {/* <RootStyle>
+      } */}
+      <RootStyle>
         <DashboardNavbar company={company} onOpenSidebar={() => setOpen(true)} />
         <DashboardSidebar company={company} isOpenSidebar={open} onCloseSidebar={() => setOpen(false)} />
         <MainStyle>
           <Outlet />
         </MainStyle>
-      </RootStyle> */}
+      </RootStyle>
     </>
   );
 }

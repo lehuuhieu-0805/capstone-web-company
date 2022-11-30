@@ -44,7 +44,7 @@ export default function LoginForm() {
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Địa chỉ email không hợp lệ').required('Vui lòng nhập địa chỉ email'),
-    password: Yup.string().required('Vui lòng nhập mật khẩu').min(8,'Tối thiểu 8 kí tự'),
+    password: Yup.string().required('Vui lòng nhập mật khẩu').min(8, 'Tối thiểu 8 kí tự'),
   });
 
   const defaultValues = {
@@ -76,7 +76,7 @@ export default function LoginForm() {
       }
     }).then((response) => {
       console.log(response);
-     
+
       if (response.data?.token?.result?.msg === 'Your account not verify. Please verify your account and login again!!!') {
         return axios({
           url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_CODE_CONFIRM_MAIL}?email=${getValues('email')}`,
@@ -96,7 +96,9 @@ export default function LoginForm() {
         setSeverity('error');
         setMessageAlert('Sai tài khoản hoặc mật khẩu');
         setOpenAlert(true);
-        localStorage.clear()
+        localStorage.clear();
+        // eslint-disable-next-line consistent-return
+        return;
       }
       localStorage.setItem('token', response.data.token.result.token);
       const { IdUser } = jwtDecode(response.data.token.result.token);
@@ -108,8 +110,7 @@ export default function LoginForm() {
         navigate('/dashboard/show-information-join');
       } else if (response.data.token.result.msg.trim() === 'Your company not approved yet, please wait for admin approved!!!') {
         navigate('/dashboard/show-information-create');
-      
-      }else if (response.data.token.result.msg.trim() === 'Login success!!!') {
+      } else if (response.data.token.result.msg.trim() === 'Login success!!!') {
         axios({
           url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_USER}?email=${getValues('email')}`,
           method: 'get',
