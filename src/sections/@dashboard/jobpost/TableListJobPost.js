@@ -116,9 +116,9 @@ export default function TableListJobPost(props) {
               </TableContainer>
               {listJobPost?.length > 0 && (
                 <TablePagination
-                
-                labelRowsPerPage={'Số hàng mỗi trang'}
-              labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
+
+                  labelRowsPerPage={'Số hàng mỗi trang'}
+                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
                   rowsPerPageOptions={[5, 10, 15, 20]}
                   component="div"
                   count={totalRow}
@@ -312,13 +312,13 @@ export default function TableListJobPost(props) {
                     <Iconify icon='mdi:clipboard-text-date-outline' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
                     Gia hạn
                   </MenuItem>
-                  <MenuItem onClick={() => {
+                  {/* <MenuItem onClick={() => {
                     setOpenDialogRechargeMoney(true);
                     setAnchorEl(null);
                   }} sx={{ color: 'red' }}>
                     <Iconify icon='uil:money-insert' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
                     Nạp tiền
-                  </MenuItem>
+                  </MenuItem> */}
                 </> : null}
                 {statusJobPost === 0 || statusJobPost === 4 || statusJobPost === 2 ? (
                   <MenuItem onClick={() => {
@@ -332,7 +332,7 @@ export default function TableListJobPost(props) {
                 {statusJobPost === 2 ? (
                   <MenuItem onClick={() => {
                     setAnchorEl(null);
-                    navigate(`/dashboard/job-post/edit/${jobPostId}`);
+                    navigate(`/employee/job-post/edit/${jobPostId}`);
                   }} sx={{ color: 'blue' }}>
                     <Iconify icon='ant-design:edit-outlined' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
                     Chỉnh sửa
@@ -341,14 +341,14 @@ export default function TableListJobPost(props) {
                 {statusJobPost === 1 || statusJobPost === 3 ? (
                   <MenuItem onClick={() => {
                     setAnchorEl(null);
-                    navigate(`/dashboard/job-post/create?jobPostId=${jobPostId}`);
+                    navigate(`/employee/job-post/create?jobPostId=${jobPostId}`);
                   }} >
                     <Iconify icon='system-uicons:reuse' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
                     Sử dụng lại
                   </MenuItem>
                 ) : null}
                 <MenuItem onClick={() => {
-                  navigate(`/dashboard/job-post/detail/${jobPostId}`);
+                  navigate(`/employee/job-post/detail/${jobPostId}`);
                   setAnchorEl(null);
                 }} sx={{ color: 'green' }}>
                   <Iconify icon='akar-icons:info' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />

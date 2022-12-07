@@ -18,12 +18,13 @@ export const PUT_UPGRADE_COMPANY = 'companies/upgrade';
 
 // User
 export const POST_USER = 'users';
-export const LOGIN = 'users/login/company';
+export const LOGIN = 'users/login';
 export const PUT_USER = 'users';
 export const PUT_STATUS_USER = 'users';
 export const GET_USER = 'users';
-export const PUT_UPDATE_PASSWORD_USER = 'users/password';
-export const PUT_RESET_PASSWORD_USER = 'users/reset';
+export const PUT_UPDATE_PASSWORD_USER = 'companies/password';
+export const PUT_UPDATE_PASSWORD_EMPLOYEE = 'employees/password';
+export const PUT_RESET_PASSWORD_USER = 'companies/reset';
 
 // Job Position
 export const GET_JOBPOSITION = 'job-positions';
@@ -61,7 +62,7 @@ export const POST_URL_ALBUMIMAGE = 'album-images/url';
 export const GET_APPLICANT = 'applicants';
 
 // Confirm Mail
-export const POST_SEND_CODE_CONFIRM_MAIL = 'emails/mail-user';
+export const POST_SEND_CODE_CONFIRM_MAIL = 'emails/mail-confirm-company';
 export const POST_CHECK_CODE_CONFIRM_MAIL = 'emails/otp';
 export const POST_SEND_MAIL_TO_ADMIN = 'emails';
 export const POST_SEND_MAIL_TO_ADMIN_TO_JOIN_COMPANY = 'emails/mail-join';
@@ -101,3 +102,7 @@ export const GET_TRANSACTION_JOB_POST = 'transactions-jobposts';
 // notification
 export const POST_SUBSCRIBE_TOPIC = 'notis/subscribe';
 export const POST_UNSUBSCRIBE_TOPIC = 'notis/unsubscribe';
+
+// employee
+export const GET_EMPLOYEE = 'employees';
+export const PUT_EMPLOYEE = 'employees';

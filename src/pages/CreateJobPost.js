@@ -28,7 +28,6 @@ import Iconify from '../components/Iconify';
 import Page from '../components/Page';
 import TabPanel from '../components/TabPanel';
 import { api, common } from '../constants';
-import TableListJobPost from '../sections/@dashboard/jobpost/TableListJobPost';
 import { minusMoney } from '../slices/moneySlice';
 import '../index.css';
 
@@ -207,7 +206,7 @@ export default function CreateJobPost() {
       setListSkillLevel([]);
       setSkillLevel([]);
       fileUrlImage = [];
-      if (pathname.includes('/dashboard/job-post/edit')) {
+      if (pathname.includes('/employee/job-post/edit')) {
         setTitle({
           key: 1,
           value: 'Chỉnh sửa bài viết tuyển dụng'
@@ -237,7 +236,7 @@ export default function CreateJobPost() {
         setJobPosition(response.data.data.job_position_id);
         setWorkingStyle(response.data.data.working_style_id);
         setWorkingPlace(response.data.data.working_place);
-        if (pathname.includes('/dashboard/job-post/edit')) {
+        if (pathname.includes('/employee/job-post/edit')) {
           setStartDay(dayjs(response.data.data.start_time));
           setEndDay(dayjs(response.data.data.end_time));
           setDisabledStartDay(!dayjs().isSameOrBefore(dayjs(response.data.data.start_time), 'day', 'month', 'year'));
@@ -482,114 +481,100 @@ export default function CreateJobPost() {
 
     if (title.key === 0) {
       axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_WALLET}?companyId=${localStorage.getItem('company_id')}`,
-        method: 'get',
+        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_JOBPOST}`,
+        method: 'post',
         // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // }
+        //   'Authorization': `Bearer ${token}`
+        // },
+        data: {
+          title: data.title,
+          description,
+          quantity: data.quantity,
+          money_for_job_post: money.replaceAll('.', ''),
+          company_id: localStorage.getItem('company_id'),
+          employee_id: localStorage.getItem('user_id'),
+          job_position_id: jobPosition,
+          working_style_id: workingStyle,
+          working_place: workingPlace,
+          start_time: startDay.format('YYYY-MM-DD'),
+          end_time: endDay.format('YYYY-MM-DD'),
+        }
       }).then((response) => {
-        if (response.data.data[0].balance < money.replaceAll('.', '')) {
-          setLoadingButton(false);
-          setOpenAlert(true);
-          setSeverity('error');
-          setMessageAlert('Số dư trong ví không đủ để tạo bài viết');
-        } else {
+        const { data } = response.data;
+
+        Promise.all(mapSkillAndSkillLevel.forEach((value) => {
           axios({
-            url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_JOBPOST}`,
+            url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_JOBPOSTSKILL}`,
             method: 'post',
             // headers: {
             //   'Authorization': `Bearer ${token}`
             // },
             data: {
-              title: data.title,
-              description,
-              quantity: data.quantity,
-              money_for_job_post: money.replaceAll('.', ''),
-              company_id: localStorage.getItem('company_id'),
-              job_position_id: jobPosition,
-              working_style_id: workingStyle,
-              working_place: workingPlace,
-              start_time: startDay.format('YYYY-MM-DD'),
-              end_time: endDay.format('YYYY-MM-DD'),
+              job_post_id: data.id,
+              skill_id: value.skill_id,
+              skill_level: value.skill_level
             }
-          }).then((response) => {
-            const { data } = response.data;
+          }).catch(error => console.log(error));
+        })).catch(error => console.log(error));
 
-            Promise.all(mapSkillAndSkillLevel.forEach((value) => {
-              axios({
-                url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_JOBPOSTSKILL}`,
-                method: 'post',
-                // headers: {
-                //   'Authorization': `Bearer ${token}`
-                // },
-                data: {
-                  job_post_id: data.id,
-                  skill_id: value.skill_id,
-                  skill_level: value.skill_level
-                }
-              }).catch(error => console.log(error));
-            })).catch(error => console.log(error));
-
-            if (listFileImage.length === 0) {
-              // eslint-disable-next-line array-callback-return
-              Promise.all(oldFileUrlImage.map((item) => {
-                axios({
-                  url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_URL_ALBUMIMAGE}`,
-                  method: 'post',
-                  // headers: {
-                  //   'Authorization': `Bearer ${token}`
-                  // },
-                  data: {
-                    job_post_id: data.id,
-                    url_image: item.url_image,
-                  }
-                }).catch(error => console.log(error));
-              })).then(() => {
-                setLoadingButton(false);
-                setOpenAlert(true);
-                setSeverity('success');
-                setMessageAlert('Tạo bài viết tuyển dụng thành công');
-                navigate('/dashboard/job-post');
-              }).catch((error) => console.log(error));
-            } else {
-              const formData = new FormData();
-              formData.append('jobPostId', data.id);
-
-              // eslint-disable-next-line no-restricted-syntax, guard-for-in
-              for (const key in Object.keys(listFileImage[0])) {
-                formData.append('uploadFiles', listFileImage[0][key]);
+        if (listFileImage.length === 0) {
+          // eslint-disable-next-line array-callback-return
+          Promise.all(oldFileUrlImage.map((item) => {
+            axios({
+              url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_URL_ALBUMIMAGE}`,
+              method: 'post',
+              // headers: {
+              //   'Authorization': `Bearer ${token}`
+              // },
+              data: {
+                job_post_id: data.id,
+                url_image: item.url_image,
               }
-
-              axios({
-                url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_ALBUMIMAGE}`,
-                method: 'post',
-                // headers: {
-                //   'Authorization': `Bearer ${token}`
-                // },
-                data: formData
-              }).then(() => {
-                setLoadingButton(false);
-                setOpenAlert(true);
-                setSeverity('success');
-                setMessageAlert('Tạo bài viết tuyển dụng thành công');
-                const action = minusMoney(money.replaceAll('.', ''));
-                dispatch(action);
-                navigate('/dashboard/job-post?status=created');
-              }).catch(error => console.log(error));
-            }
-
-          }).catch(error => {
-            console.log(error);
+            }).catch(error => console.log(error));
+          })).then(() => {
             setLoadingButton(false);
             setOpenAlert(true);
-            setSeverity('error');
-            setMessageAlert('Tạo bài viết tuyển dụng thất bại');
+            setSeverity('success');
+            setMessageAlert('Tạo bài viết tuyển dụng thành công');
+            navigate('/employee/job-post');
+          }).catch((error) => console.log(error));
+        } else {
+          const formData = new FormData();
+          formData.append('jobPostId', data.id);
+
+          // eslint-disable-next-line no-restricted-syntax, guard-for-in
+          for (const key in Object.keys(listFileImage[0])) {
+            formData.append('uploadFiles', listFileImage[0][key]);
+          }
+
+          axios({
+            url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_ALBUMIMAGE}`,
+            method: 'post',
+            // headers: {
+            //   'Authorization': `Bearer ${token}`
+            // },
+            data: formData
+          }).then(() => {
+            setLoadingButton(false);
+            setOpenAlert(true);
+            setSeverity('success');
+            setMessageAlert('Tạo bài viết tuyển dụng thành công');
             const action = minusMoney(money.replaceAll('.', ''));
             dispatch(action);
-            navigate('/dashboard/job-post?status=create-failed');
-          });
+            navigate('/employee/job-post?status=created');
+          }).catch(error => console.log(error));
         }
-      }).catch(error => console.log(error));
+
+      }).catch(error => {
+        console.log(error);
+        setLoadingButton(false);
+        setOpenAlert(true);
+        setSeverity('error');
+        setMessageAlert('Tạo bài viết tuyển dụng thất bại');
+        const action = minusMoney(money.replaceAll('.', ''));
+        dispatch(action);
+        navigate('/employee/job-post?status=create-failed');
+      });
 
     } else {
       axios({
@@ -607,6 +592,7 @@ export default function CreateJobPost() {
           money_for_job_post: money.replaceAll('.', ''),
           status,
           company_id: localStorage.getItem('company_id'),
+          employee_id: localStorage.getItem('user_id'),
           job_position_id: jobPosition,
           working_style_id: workingStyle,
           working_place: workingPlace,
@@ -647,7 +633,7 @@ export default function CreateJobPost() {
           // setOpenAlert(true);
           // setSeverity('success');
           // setMessageAlert('Chỉnh sửa bài viết tuyển dụng thành công');
-          navigate('/dashboard/job-post?status=updated');
+          navigate('/employee/job-post?status=updated');
         } else {
           oldFileUrlImage.forEach((item) => {
             axios({
@@ -678,7 +664,7 @@ export default function CreateJobPost() {
             // setOpenAlert(true);
             // setSeverity('success');
             // setMessageAlert('Chỉnh sửa bài viết tuyển dụng thành công');
-            navigate('/dashboard/job-post?status=updated');
+            navigate('/employee/job-post?status=updated');
 
           }).catch(error => console.log(error));
         }
@@ -689,7 +675,7 @@ export default function CreateJobPost() {
         // setOpenAlert(true);
         // setSeverity('error');
         // setMessageAlert('Chỉnh sửa bài viết tuyển dụng thất bại');
-        navigate('/dashboard/job-post?status=update-failed');
+        navigate('/employee/job-post?status=update-failed');
       });
     }
 
@@ -732,14 +718,15 @@ export default function CreateJobPost() {
 
       case 1:
         isValid = true;
-        if (!skill) {
+        console.log(skillLevel);
+        if (skill.length === 0) {
           setHasError((preState) => ({
             ...preState,
             skill: true
           }));
           isValid = false;
         }
-        if (!skillLevel) {
+        if (skillLevel.length === 0) {
           setHasError((preState) => ({
             ...preState,
             skillLevel: true
@@ -803,15 +790,15 @@ export default function CreateJobPost() {
             <HeaderBreadcrumbs
               heading={title.value}
               links={[
-                { name: 'Bài viết tuyển dụng', href: '/dashboard/job-post' },
-                { name: 'Tạo bài viết tuyển dụng', href: '/dashboard/job-post/create' },
+                { name: 'Bài viết tuyển dụng', href: '/employee/job-post' },
+                { name: 'Tạo bài viết tuyển dụng', href: '/employee/job-post/create' },
               ]}
             />
           ) : <HeaderBreadcrumbs
             heading={title.value}
             links={[
-              { name: 'Bài viết tuyển dụng', href: '/dashboard/job-post' },
-              { name: 'Chỉnh sửa bài viết tuyển dụng', href: `/dashboard/job-post/edit` },
+              { name: 'Bài viết tuyển dụng', href: '/employee/job-post' },
+              { name: 'Chỉnh sửa bài viết tuyển dụng', href: `/employee/job-post/edit` },
             ]}
           />
           }
@@ -998,11 +985,11 @@ export default function CreateJobPost() {
                     </Grid>
                     <Grid item xs={11}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Cấp bậc</InputLabel>
+                        <InputLabel id="demo-simple-select-label">Trình độ</InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
                           value={skillLevel[index]?.id}
-                          label="Cấp bậc"
+                          label="Trình độ"
                           onChange={(e, obj) => handleChangeSkillLevel(e, obj, index)}
                           disabled={skillLevel[index]?.id ? false : disabledField}
                         >
@@ -1010,7 +997,7 @@ export default function CreateJobPost() {
                             (<MenuItem key={el.id} value={el.id} >{el.name}</MenuItem>)
                           )}
                         </Select>
-                        {hasError.skillLevel && <p style={{ color: 'red' }}>*Vui lòng chọn cấp bậc</p>}
+                        {hasError.skillLevel && <p style={{ color: 'red' }}>*Vui lòng chọn trình độ</p>}
                       </FormControl>
                     </Grid>
                     <Grid item xs={2}>

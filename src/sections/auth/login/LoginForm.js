@@ -44,7 +44,7 @@ export default function LoginForm() {
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Địa chỉ email không hợp lệ').required('Vui lòng nhập địa chỉ email'),
-    password: Yup.string().required('Vui lòng nhập mật khẩu').min(8, 'Tối thiểu 8 kí tự'),
+    password: Yup.string().required('Vui lòng nhập mật khẩu'),
   });
 
   const defaultValues = {
@@ -75,10 +75,115 @@ export default function LoginForm() {
         password: data.password
       }
     }).then((response) => {
-      console.log(response);
+      // console.log(response);
 
-      if (response.data?.token?.result?.msg === 'Your account not verify. Please verify your account and login again!!!') {
-        return axios({
+
+      // if (response.data.detail === 'User or password not correct!!! ') {
+      //   setSeverity('error');
+      //   setMessageAlert('Sai tài khoản hoặc mật khẩu');
+      //   setOpenAlert(true);
+      //   localStorage.clear();
+      //   // eslint-disable-next-line consistent-return
+      //   return;
+      // }
+      localStorage.setItem('token', response.data.token);
+      const company = jwtDecode(response.data.token);
+
+      // console.log(company)
+      if (company.role === 'COMPANY') {
+
+        localStorage.setItem('user_id', company.Id);
+        localStorage.setItem('company_id', company.Id);
+        localStorage.setItem('role', company.role);
+        setLoadingButtonLogin(false);
+        navigate('/company/dashboard?status=logged', { replace: true });
+      }
+      if (company.role === 'EMPLOYEE') {
+        axios({
+          url: `https://stg-api-itjob.unicode.edu.vn/api/v1/employees/${company.Id}`,
+          method: 'get',
+          // headers: {
+          //   Authorization: `Bearer ${token}`
+          // }
+        }).then((response) => {
+          console.log(response);
+          if (response.data.data.status === 0) {
+            setSeverity('error');
+            setMessageAlert('Tài khoản của bạn đã bị xoá khỏi công ty');
+            setOpenAlert(true);
+            localStorage.clear();
+            setLoadingButtonLogin(false);
+          } else {
+            // console.log(response.data.data)
+            localStorage.setItem('user_id', company.Id);
+            localStorage.setItem('role', company.role);
+            localStorage.setItem('company_id', response.data.data.company_id);
+            setLoadingButtonLogin(false);
+            navigate('/employee/dashboard?status=logged', { replace: true });
+          }
+
+
+        }).catch(error => console.log(error));
+      }
+
+
+
+      // axios({
+      //   url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_JOBPOST}/${IdUser}`,
+      //   method: 'get',
+      //   // headers: {
+      //   //   Authorization: `Bearer ${token}`
+      //   // }
+      // }).then((response) => {
+      //   setRefreshData(!refreshData);
+      //   setLoadingButtonHidden(false);
+      //   setOpenDialogHidden(false);
+      //   setOpenAlert(true);
+      //   setSeverity('success');
+      //   setMessageAlert('Ẩn bài viết tuyển dụng thành công');
+      //   const action = addMoney(response.data.data.money);
+      //   dispatch(action);
+      // }).catch(error => console.log(error));
+
+
+      //         localStorage.setItem('company_id', IdUser);
+      //         setLoadingButtonLogin(false);
+      //         navigate('/dashboard/app?status=logged', { replace: true });
+      // if (response.data.token.result.msg.trim() === 'Your account not have any company, please create your company!!!') {
+      //   setLoadingButtonLogin(false);
+      //   navigate('/dashboard/create-company', { replace: true });
+      // } else if (response.data.token.result.msg.trim() === 'Your account not approved yet, please wait for admin approved!!!') {
+      //   navigate('/dashboard/show-information-join');
+      // } else if (response.data.token.result.msg.trim() === 'Your company not approved yet, please wait for admin approved!!!') {
+      //   navigate('/dashboard/show-information-create');
+      // } else if (response.data.token.result.msg.trim() === 'Login success!!!') {
+      //   axios({
+      //     url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_USER}?email=${getValues('email')}`,
+      //     method: 'get',
+      //     // headers: {
+      //     //   Authorization: `Bearer ${token}`,
+      //     // }
+      //   }).then((response) => {
+      //     for (let i = 0; i < response.data.data.length; i += 1) {
+      //       const element = response.data.data[i];
+      //       if (element.email === getValues('email')) {
+      //         localStorage.setItem('user_id', element.id);
+      //         localStorage.setItem('company_id', element.company_id);
+      //         setLoadingButtonLogin(false);
+      //         navigate('/dashboard/app?status=logged', { replace: true });
+      //       }
+      //     }
+      //   });
+      // }
+    }).catch((error) => {
+      // console.log(error.response);
+      setLoadingButtonLogin(false);
+
+      if (error.response.data.detail === 'Your account not verify, please verify your account and login again!!!') {
+        setSeverity('error');
+        setMessageAlert('Tài khoản của bạn chưa xác thực otp.Vui lòng xác thực');
+        setOpenAlert(true);
+        axios({
           url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_CODE_CONFIRM_MAIL}?email=${getValues('email')}`,
           method: 'POST',
           // headers: {
@@ -91,95 +196,20 @@ export default function LoginForm() {
             setMessageAlert('Gửi email xác thực không thành công');
             setOpenAlert(true);
           });
-      }
-      if (response.data?.token?.result?.msg === 'User or password not correct!!! ') {
+      } else if (error.response.data.detail.trim() === 'you have not been approved, please wait for the admin to approve and log in again!!!') {
+        setSeverity('error');
+        setMessageAlert('Công ty của bạn chưa được admin phê duyệt, vui lòng đợi Admin phê duyệt');
+        setOpenAlert(true);
+
+      } else if (error.response.data.detail.trim() === 'Email or password not correct!!!') {
         setSeverity('error');
         setMessageAlert('Sai tài khoản hoặc mật khẩu');
         setOpenAlert(true);
-        localStorage.clear();
-        // eslint-disable-next-line consistent-return
-        return;
-      }
-      localStorage.setItem('token', response.data.token.result.token);
-      const { IdUser } = jwtDecode(response.data.token.result.token);
-      localStorage.setItem('user_id', IdUser);
-      if (response.data.token.result.msg.trim() === 'Your account not have any company, please create your company!!!') {
-        setLoadingButtonLogin(false);
-        navigate('/dashboard/create-company', { replace: true });
-      } else if (response.data.token.result.msg.trim() === 'Your account not approved yet, please wait for admin approved!!!') {
-        navigate('/dashboard/show-information-join');
-      } else if (response.data.token.result.msg.trim() === 'Your company not approved yet, please wait for admin approved!!!') {
-        navigate('/dashboard/show-information-create');
-      } else if (response.data.token.result.msg.trim() === 'Login success!!!') {
-        axios({
-          url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_USER}?email=${getValues('email')}`,
-          method: 'get',
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // }
-        }).then((response) => {
-          for (let i = 0; i < response.data.data.length; i += 1) {
-            const element = response.data.data[i];
-            if (element.email === getValues('email')) {
-              localStorage.setItem('user_id', element.id);
-              localStorage.setItem('company_id', element.company_id);
-              setLoadingButtonLogin(false);
-              // setSeverity('success');
-              // setMessageAlert('Đăng nhập thành công');
-              // setOpenAlert(true);
-              // setTimeout(() => {
-              //   navigate('/dashboard/app', { replace: true });
-              // }, 3000);
-              navigate('/dashboard/app?status=logged', { replace: true });
-            }
-          }
-        });
-      }
-    }).catch((error) => {
-      console.log(error);
-      setLoadingButtonLogin(false);
-      if (error.response.data.detail.trim() === 'Your account not approved yet, please wait for admin approved') {
-        setSeverity('error');
-        setMessageAlert('Tài khoản của bạn chưa được admin phê duyệt, vui lòng đợi admin phê duyệt');
-        setOpenAlert(true);
-        // } else if (error.response.data.detail.trim() === 'Your account not verify. Please verify your account and login again!!!') {
-        //   axios({
-        //     url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_CODE_CONFIRM_MAIL}?email=${getValues('email')}`,
-        //     method: 'POST',
-        //     // headers: {
-        //     //   Authorization: `Bearer ${token}`
-        //     // },
-        //   }).then(() => setOpenDialogConfirmMail(true))
-        //     .catch(error => {
-        //       console.log(error);
-        //       setSeverity('error');
-        //       setMessageAlert('Gửi email xác thực không thành công');
-        //       setOpenAlert(true);
-        //     });
-      } else if (error.response.data.detail.trim() === 'Your account not have any company, please create your company!!!') {
-        axios({
-          url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_COMPANIES}?status=1`,
-          method: 'get',
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
-        }).then((response) => {
-          setListCompany(response.data.data);
-          setSeverity('error');
-          setMessageAlert('Tài khoản của bạn chưa thuộc công ty nào, vui lòng chọn công ty');
-          setOpenAlert(true);
-          setOpenDialog(true);
-        }).catch(error => console.log(error));
-      } else if (error.response.data.detail.trim() === 'Your company not approved yet, please wait for admin approved') {
-        setSeverity('error');
-        setMessageAlert('Công ty của bạn chưa được admin phê duyệt, vui lòng đợi admin phê duyệt');
-        setOpenAlert(true);
+
       } else {
-        // setSeverity('error');
-        // setMessageAlert('Tài khoản hoặc mật khẩu không chính xác');
-        // setOpenAlert(true);
+
         setSeverity('error');
-        setMessageAlert('Có lỗi xảy ra');
+        setMessageAlert('Có lỗi xảy ra.Vui lòng thử lại sau');
         setOpenAlert(true);
       }
     });
@@ -280,7 +310,7 @@ export default function LoginForm() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={openDialog} fullWidth maxWidth='sm'>
+      {/* <Dialog open={openDialog} fullWidth maxWidth='sm'>
         <DialogContent>
           <Tabs value={valueTab} onChange={(event, newValue) => setValueTab(newValue)} aria-label="basic tabs example">
             <Tab label='Chọn công ty' id='simple-tab-0' aria-controls='simple-tabpanel-0' />
@@ -369,7 +399,7 @@ export default function LoginForm() {
             <RegisterCompanyForm setSeverity={setSeverity} setMessageAlert={setMessageAlert} setOpenAlert={setOpenAlert} setOpenDialog={setOpenDialog} emailUser={emailUser} />
           </TabPanel>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       <DialogForgetPassword setOpenDialogForgetPassword={setOpenDialogForgetPassword} openDialogForgetPassword={openDialogForgetPassword} setSeverity={setSeverity} setMessageAlert={setMessageAlert} setOpenAlert={setOpenAlert} />
 

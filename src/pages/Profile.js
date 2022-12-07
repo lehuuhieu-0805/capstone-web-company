@@ -165,13 +165,23 @@ export default function Profile() {
       <Page title='Thông tin công ty'>
         <Container maxWidth='xl'>
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <HeaderBreadcrumbs
-              heading="Thông tin công ty"
-              links={[
-                { name: 'Trang chủ', href: '/dashboard/app' },
-                { name: 'Thông tin công ty', href: '/dashboard/profile' },
-              ]}
-            />
+            {localStorage.getItem('role') === 'EMPLOYEE' ? (
+              <HeaderBreadcrumbs
+                heading="Thông tin công ty"
+                links={[
+                  { name: 'Trang chủ', href: '/employee/dashboard' },
+                  { name: 'Thông tin công ty', href: '/dashboard/profile' },
+                ]}
+              />
+            ) : (
+              <HeaderBreadcrumbs
+                heading="Thông tin công ty"
+                links={[
+                  { name: 'Trang chủ', href: '/company/dashboard' },
+                  { name: 'Thông tin công ty', href: '/dashboard/profile' },
+                ]}
+              />
+            )}
           </Stack>
 
           {loadingData
@@ -234,7 +244,7 @@ export default function Profile() {
                           <TextField fullWidth disabled={disabled} {...register('email')} label='Email' />
                           <p style={{ color: 'red' }}>{errors.email?.message}</p>
                         </Grid>
-                        
+
                         <Grid item xs={12}>
                           <TextField fullWidth multiline disabled={disabled} {...register('description')} label='Mô tả' />
                           <p style={{ color: 'red' }}>{errors.description?.message}</p>
@@ -261,7 +271,7 @@ export default function Profile() {
                   ) : (
                     <Grid container direction='row' justifyContent='flex-end' spacing={2}>
                       <Grid item>
-                        <Button variant='outlined' onClick={() => {
+                        <Button variant='outlined' disabled={localStorage.getItem('role') === 'EMPLOYEE' && true} onClick={() => {
                           setDisabled(false);
                           setShowButtonEdit(true);
                         }}>Chỉnh sửa</Button>

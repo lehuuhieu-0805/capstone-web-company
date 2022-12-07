@@ -1,16 +1,17 @@
 // @mui
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, Snackbar, Stack, TextField } from '@mui/material';
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, Snackbar, Stack, TextField, Typography } from '@mui/material';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 // form
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { api, common } from '../../../constants';
-import { FormProvider, RHFTextField, RHFCheckbox } from '../../../components/hook-form';
+import { FormProvider, RHFTextField, RHFCheckbox, RHFUploadAvatar } from '../../../components/hook-form';
 import Iconify from '../../../components/Iconify';
+
 
 
 
@@ -53,15 +54,25 @@ export default function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const registerSchema = yup.object().shape({
+    name: yup.string().required('Vui lòng nhập tên công ty'),
     email: yup.string().email('Địa chỉ email không hợp lệ').required('Vui lòng nhập địa chỉ email'),
-    phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").max(10, 'Số điện thoại không hợp lệ'),
-    password: yup.string().required('Vui lòng nhập mật khẩu'),
+    phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").min(10, 'Số điện thoại không hợp lệ').max(10, 'Số điện thoại không hợp lệ'),
+    website: yup.string().required('Vui lòng nhập địa chỉ website'),
+    description: yup.string().required('Vui lòng nhập mô tả công ty'),
+    taxCode: yup.string().required('Vui lòng nhập mã số thuế'),
+    password: yup.string().required('Vui lòng nhập mật khẩu').min(8, 'Mật khẩu tối thiểu 8 kí tự'),
     confirmPassword: yup.string().required('Vui lòng nhập lại mật khẩu').oneOf([yup.ref('password'), null], 'Mật khẩu không khớp'),
+    image: yup.mixed().test('required', 'Logo bắt buộc', (value) => value !== ''),
   });
 
   const defaultValues = {
     phone: '',
     email: '',
+    name: '',
+    website: '',
+    description: '',
+    taxCode: '',
+    image: '',
     password: '',
     confirmPassword: '',
   };
@@ -72,27 +83,58 @@ export default function RegisterForm() {
   });
 
   const {
-    handleSubmit, getValues, reset,
+    handleSubmit, getValues, reset, setValue
+
   } = methods;
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    setLoadingButtonRegister(true);
-    axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_USER}`,
-      method: 'POST',
-      // headers: {
-      //   Authorization: `Bearer ${token}`,
-      // },
-      data: {
-        phone: data.phone,
-        email: data.email,
-        password: data.password,
-        role_id: '61F8FC17-55F2-46F8-BC8D-86CB4AB3B07D'
+  const handleDrop = useCallback(
+    (acceptedFiles) => {
+      const file = acceptedFiles[0];
+
+      if (file) {
+        setValue(
+          'image',
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        );
       }
-    }).then(() => {
+    },
+    [setValue]
+  );
+
+
+
+  const onSubmit = async (data) => {
+    setLoadingButtonRegister(true);
+    console.log(data);
+    data.company_type = companyType;
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('email', data.email);
+    formData.append('phone', data.phone);
+    formData.append('website', data.website);
+    formData.append('description', data.description);
+    formData.append('companyType', data.company_type);
+    formData.append('password', data.password);
+    if (data.image) {
+      formData.append('uploadFile', data.image);
+    }
+    formData.append('taxCode', data.taxCode);
+    // setLoadingButtonRegister(true);
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_COMPANY}`,
+      method: 'post',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        // Authorization: `Bearer ${token}`,        
+      },
+      data: formData
+    }).then((response) => {
+      console.log(response.data.data.email);
+
       axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_CODE_CONFIRM_MAIL}?email=${getValues('email')}`,
+        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_CODE_CONFIRM_MAIL}?email=${response.data.data.email}`,
         method: 'POST',
         // headers: {
         //   Authorization: `Bearer ${token}`
@@ -215,6 +257,8 @@ export default function RegisterForm() {
   //   }
   // };
 
+  const onError = (error) => console.log(error);
+
   return (
     <>
       {/* <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -294,7 +338,108 @@ export default function RegisterForm() {
         </Grid>
       </form> */}
 
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit, onError)}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Box>
+              <RHFUploadAvatar
+                name="image"
+                onDrop={handleDrop}
+                helperText={
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      mt: 1,
+                      mx: 'auto',
+                      display: 'block',
+                      textAlign: 'center',
+                      color: 'text.secondary',
+                    }}
+                  >
+                    Logo công ty
+                  </Typography>
+
+                }
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <RHFTextField label='Tên công ty' name="name" />
+          </Grid>
+          <Grid item xs={6}>
+            <RHFTextField label='Email' name="email" />
+          </Grid>
+          <Grid item xs={6}>
+            <RHFTextField label='Số điện thoại' name="phone" />
+          </Grid>
+          <Grid item xs={12}>
+            <RHFTextField multiline label='Giới thiệu công ty' name="description" />
+          </Grid>
+          <Grid item xs={12}>
+            <RHFTextField label='Website' name="website" />
+          </Grid>
+          <Grid item xs={6}>
+            <FormControl fullWidth required>
+              <InputLabel id="demo-simple-select-label">Loại công ty</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={companyType}
+                onChange={(event) => {
+                  setCompanyType(event.target.value);
+                }}
+                label="Loại công ty"
+              >
+                {common.STATUS_COMPANY.map((element, index) =>
+                  <MenuItem key={index} value={element.value}>{element.label}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={6}>
+            <RHFTextField label='Mã số thuế' name="taxCode" type="number" />
+          </Grid>
+          <Grid item xs={6}>
+            <RHFTextField
+              name="password"
+              label="Mật khẩu"
+              type={showPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <RHFTextField
+              name="confirmPassword"
+              label="Nhập lại mật khẩu"
+              type={showConfirmPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                      <Iconify icon={showConfirmPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <LoadingButton type="submit" variant="contained" loading={loadingButtonRegister}>
+              Đăng kí
+            </LoadingButton>
+          </Grid>
+        </Grid>
+      </FormProvider>
+
+      {/* <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>
           <Grid container spacing={3}>
             <Grid item xs={6}>
@@ -304,6 +449,26 @@ export default function RegisterForm() {
               <RHFTextField name="phone" type='number' label="Số điện thoại" fullWidth />
             </Grid>
           </Grid>
+
+          <Grid item xs={6}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Loại công ty</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={companyType}
+                label="Loại công ty"
+                onChange={(event) => {
+                  setCompanyType(event.target.value);
+                }}
+              >
+                {common.STATUS_COMPANY.map((element, index) =>
+                  <MenuItem key={index} value={element.value}>{element.label}</MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </Grid>
+
 
           <RHFTextField
             name="password"
@@ -339,7 +504,7 @@ export default function RegisterForm() {
         <LoadingButton sx={{ mt: 3 }} fullWidth size="large" type="submit" variant="contained" loading={loadingButtonRegister}>
           Đăng kí
         </LoadingButton>
-      </FormProvider>
+      </FormProvider> */}
 
       <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'right' }} open={openAlert} autoHideDuration={5000} onClose={() => setOpenAlert(false)}>
         <Alert variant='filled' severity={severity}>
@@ -388,9 +553,9 @@ export default function RegisterForm() {
                 //   Authorization: `Bearer ${token}`
                 // },
               }).then(() => {
-                // setSeverity('success');
-                // setMessageAlert('Xác thực email thành công');
-                // setOpenAlert(true);
+                setSeverity('success');
+                setMessageAlert('Xác thực email thành công');
+                setOpenAlert(true);
                 reset();
                 // setTimeout(() => {
                 //   setLoadingButtonConfirm(false);

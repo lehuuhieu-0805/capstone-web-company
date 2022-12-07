@@ -117,8 +117,8 @@ export default function DetailJobPost() {
               <HeaderBreadcrumbs
                 heading={jobPostDetail?.title}
                 links={[
-                  { name: 'Bài viết tuyển dụng', href: '/dashboard/job-post' },
-                  { name: 'Chi tiết bài viết tuyển dụng', href: '/dashboard/job-post/detail' },
+                  { name: 'Bài viết tuyển dụng', href: '/company/job-post' },
+                  { name: 'Chi tiết bài viết tuyển dụng', href: '/company/job-post/detail' },
                 ]}
               />
             </Stack>
@@ -257,10 +257,11 @@ export default function DetailJobPost() {
             {jobPostDetail.status === 0 || jobPostDetail.status === 1 ? (
               <>
                 <Tabs sx={{ mt: 3 }} value={value} onChange={(event, newValue) => setValue(newValue)} aria-label="basic tabs example">
-                  <Tab label='Tiềm năng' id='simple-tab-0' aria-controls='simple-tabpanel-0' disabled={jobPostDetail.status !== 0 && company?.is_premium === true}
-                  
+                  <Tab label='Tiềm năng' id='simple-tab-0' aria-controls='simple-tabpanel-0'
+                    disabled={jobPostDetail.status !== 0 && !company?.is_premium || !company?.is_premium}
+
                   // {...( (jobPostDetail.status !== 0 && jobPostDetail.status !== 1 ) || !company?.is_premium && { disabled: true })} 
-                 
+
                   />
                   <Tab label='Ứng viên' id='simple-tab-1' aria-controls='simple-tabpanel-1' />
                   <Tab label='Quan tâm' id='simple-tab-2' aria-controls='simple-tabpanel-2' />

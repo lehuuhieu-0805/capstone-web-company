@@ -15,7 +15,7 @@ import { api } from '../constants';
 
 const schema = Yup.object().shape({
   passwordOld: Yup.string().required('Vui lòng nhập mật khẩu cũ'),
-  passwordNew: Yup.string().required('Vui lòng nhập mật khẩu mới').min(8,'Tối thiểu 8 kí tự'),
+  passwordNew: Yup.string().required('Vui lòng nhập mật khẩu mới').min(8, 'Tối thiểu 8 kí tự'),
   passwordConfirm: Yup.string().required('Vui lòng nhập lại mật khẩu mới').oneOf([Yup.ref('passwordNew'), null], 'Mật khẩu không khớp'),
 });
 
@@ -45,31 +45,60 @@ export default function ChangePassword() {
 
   const onSubmit = (data) => {
     setLoadingButton(true);
-    axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_UPDATE_PASSWORD_USER}?id=${localStorage.getItem('user_id')}&currentPassword=${data.passwordOld}&newPassword=${data.passwordNew}`,
-      method: 'put',
-      // headers: {
-      //   Authorization: `Bearer ${token}`,
-      // },
-    }).then(() => {
-      setLoadingButton(false);
-      setSeverity('success');
-      setMessageAlert('Đổi mật khẩu thành công');
-      setOpenAlert(true);
-      reset();
-    }).catch((error) => {
-      console.log(error);
-      if (error.response.data.message.trim() === 'Current password not correct!!!') {
-        setSeverity('error');
-        setMessageAlert('Mật khẩu cũ không đúng');
+    if (localStorage.getItem('role') === 'EMPLOYEE') {
+      axios({
+        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_UPDATE_PASSWORD_EMPLOYEE}?id=${localStorage.getItem('user_id')}&currentPassword=${data.passwordOld}&newPassword=${data.passwordNew}`,
+        method: 'put',
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+      }).then(() => {
+        setLoadingButton(false);
+        setSeverity('success');
+        setMessageAlert('Đổi mật khẩu thành công');
         setOpenAlert(true);
-      } else {
-        setSeverity('error');
-        setMessageAlert('Đổi mật khẩu không thành công');
+        reset();
+      }).catch((error) => {
+        console.log(error);
+        if (error.response.data.message.trim() === 'Current password not correct!!!') {
+          setSeverity('error');
+          setMessageAlert('Mật khẩu cũ không đúng');
+          setOpenAlert(true);
+        } else {
+          setSeverity('error');
+          setMessageAlert('Đổi mật khẩu không thành công');
+          setOpenAlert(true);
+        }
+        setLoadingButton(false);
+      });
+    }
+    if (localStorage.getItem('role') === 'COMPANY') {
+      axios({
+        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_UPDATE_PASSWORD_USER}?id=${localStorage.getItem('user_id')}&currentPassword=${data.passwordOld}&newPassword=${data.passwordNew}`,
+        method: 'put',
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
+      }).then(() => {
+        setLoadingButton(false);
+        setSeverity('success');
+        setMessageAlert('Đổi mật khẩu thành công');
         setOpenAlert(true);
-      }
-      setLoadingButton(false);
-    });
+        reset();
+      }).catch((error) => {
+        console.log(error);
+        if (error.response.data.message.trim() === 'Current password not correct!!!') {
+          setSeverity('error');
+          setMessageAlert('Mật khẩu cũ không đúng');
+          setOpenAlert(true);
+        } else {
+          setSeverity('error');
+          setMessageAlert('Đổi mật khẩu không thành công');
+          setOpenAlert(true);
+        }
+        setLoadingButton(false);
+      });
+    }
   };
 
   return (
@@ -77,13 +106,23 @@ export default function ChangePassword() {
       <Page title='Đổi mật khẩu'>
         <Container maxWidth='sm'>
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <HeaderBreadcrumbs
-              heading="Đổi mật khẩu"
-              links={[
-                { name: 'Trang chủ', href: '/dashboard/app' },
-                { name: 'Đổi mật khẩu', href: '/dashboard/change-password' },
-              ]}
-            />
+            {localStorage.getItem('role') === 'EMPLOYEE' ? (
+              <HeaderBreadcrumbs
+                heading="Đổi mật khẩu"
+                links={[
+                  { name: 'Trang chủ', href: '/employee/dashboard' },
+                  { name: 'Đổi mật khẩu', href: '/change-password' },
+                ]}
+              />
+            ) : (
+              <HeaderBreadcrumbs
+                heading="Đổi mật khẩu"
+                links={[
+                  { name: 'Trang chủ', href: '/company/dashboard' },
+                  { name: 'Đổi mật khẩu', href: '/change-password' },
+                ]}
+              />
+            )}
           </Stack>
 
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>

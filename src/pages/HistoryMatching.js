@@ -121,8 +121,8 @@ export default function HistoryMatching() {
           <HeaderBreadcrumbs
             heading="Lịch sử kết nối"
             links={[
-              { name: 'Trang chủ', href: '/dashboard/app' },
-              { name: 'Lịch sử kết nối', href: '/dashboard/history-matching' },
+              { name: 'Trang chủ', href: '/company/dashboard' },
+              { name: 'Lịch sử kết nối', href: '/company/history-matching' },
             ]}
           />
         </Stack>

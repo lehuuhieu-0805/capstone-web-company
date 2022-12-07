@@ -4,7 +4,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import {
-  Alert, Button, Container, Dialog, DialogActions, DialogTitle, Snackbar, Stack, Tab, Tabs
+  Alert, Button, Container, Dialog, DialogActions, DialogTitle, Snackbar, Stack, Tab, Tabs, Typography
 } from '@mui/material';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -25,6 +25,7 @@ import TabPanel from '../components/TabPanel';
 import { api } from '../constants';
 import TableListJobPost from '../sections/@dashboard/jobpost/TableListJobPost';
 import { getQueryParams } from '../utils/getQueryParams';
+import Label from '../components/Label';
 
 
 const schema = yup.object().shape({
@@ -90,6 +91,12 @@ export default function JobPost() {
   const [loadingButtonHidden, setLoadingButtonHidden] = useState(false);
 
   const [filterName, setFilterName] = useState('');
+
+  const [lengthJobPostActive, setLengthJobPostActive] = useState(0);
+  const [lengthJobPostHidden, setLengthJobPostHidden] = useState(0);
+  const [lengthJobPostPending, setLengthJobPostPending] = useState(0);
+  const [lengthJobPostCancel, setLengthJobPostCancel] = useState(0);
+  const [lengthJobPostPosting, setLengthJobPostPosting] = useState(0);
 
   const dispatch = useDispatch();
   const getQueryParam = getQueryParams();
@@ -187,7 +194,7 @@ export default function JobPost() {
   useEffect(() => {
     setLoadingData(true);
     axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&page=${page + 1}&page-size=${rowsPerPage}${statusJobPost !== 1 ? `&sort-key=CreateDate&sort-order=${sortCreateDate}` : '&sort-key=EndTime&sort-order=DESC'}&status=${statusJobPost}`,
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&page=${page + 1}&page-size=${rowsPerPage}${statusJobPost !== 1 ? `&sort-key=CreateDate&sort-order=${sortCreateDate}` : '&sort-key=EndTime&sort-order=DESC'}&status=${statusJobPost}`,
       method: 'get',
       // headers: {
       //   'Authorization': `Bearer ${token}`
@@ -196,7 +203,7 @@ export default function JobPost() {
       setListJobPost(response.data?.data);
 
       axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}`,
+        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}`,
         method: 'get',
         // headers: {
         //   'Authorization': `Bearer ${token}`
@@ -207,12 +214,63 @@ export default function JobPost() {
       }).catch(error => console.log(error));
 
     }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=5`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostPosting(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=0`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostActive(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=1`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostHidden(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=2`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostPending(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=3`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostCancel(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
   }, [page, refreshData, rowsPerPage, sortCreateDate, statusJobPost]);
 
   const debounceJobPost = useCallback(debounce((nextValue) => {
     setLoadingData(true);
     axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&page=${page + 1}&page-size=${rowsPerPage}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}${nextValue ? `&title=${nextValue}` : ''}&status=${statusJobPost}`,
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&page=${page + 1}&page-size=${rowsPerPage}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}${nextValue ? `&title=${nextValue}` : ''}&status=${statusJobPost}`,
       method: 'get',
       // headers: {
       //   'Authorization': `Bearer ${token}`
@@ -221,7 +279,7 @@ export default function JobPost() {
       setListJobPost(response.data?.data);
 
       axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}${nextValue ? `&title=${nextValue}` : ''}&status=${statusJobPost}`,
+        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}${nextValue ? `&title=${nextValue}` : ''}&status=${statusJobPost}`,
         method: 'get',
         // headers: {
         //   'Authorization': `Bearer ${token}`
@@ -387,6 +445,14 @@ export default function JobPost() {
     // }
   };
 
+  const TABS = [
+    { value: 0, label: 'Đang hoạt động', color: 'success', count: lengthJobPostActive },
+    { value: 2, label: 'Đang đợi duyệt', color: 'success', count: lengthJobPostPosting },
+    { value: 4, label: 'Chờ hoạt động', color: 'success', count: lengthJobPostPending },
+    { value: 3, label: 'Từ chối', color: 'error', count: lengthJobPostCancel },
+    { value: 1, label: 'Đã ẩn', color: 'warning', count: lengthJobPostHidden },
+  ];
+
   return (
     <Page title="Bài tuyển dụng">
       <Container maxWidth="xl">
@@ -394,11 +460,11 @@ export default function JobPost() {
           <HeaderBreadcrumbs
             heading="Bài viết tuyển dụng"
             links={[
-              { name: 'Trang chủ', href: '/dashboard/app' },
-              { name: 'Danh sách bài viết tuyển dụng', href: '/dashboard/job-post' },
+              { name: 'Trang chủ', href: '/employee/dashboard' },
+              { name: 'Danh sách bài viết tuyển dụng', href: '/employee/job-post' },
             ]}
           />
-          <Button variant="contained" component={RouterLink} to="/dashboard/job-post/create" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" component={RouterLink} to="/employee/job-post/create" startIcon={<Iconify icon="eva:plus-fill" />}>
             Tạo bài viết tuyển dụng
           </Button>
         </Stack>
@@ -499,7 +565,7 @@ export default function JobPost() {
           </Alert>
         </Snackbar>
 
-        <Tabs value={valueTab} onChange={(event, newValue) => setValueTab(newValue)} aria-label="basic tabs example">
+        {/* <Tabs value={valueTab} onChange={(event, newValue) => setValueTab(newValue)} aria-label="basic tabs example">
           <Tab label='Đang hoạt động' id='simple-tab-0' aria-controls='simple-tabpanel-0' onClick={() => {
             setFilterName('');
             setStatusJobPost(0);
@@ -520,6 +586,32 @@ export default function JobPost() {
             setFilterName('');
             setStatusJobPost(1);
           }} />
+        </Tabs> */}
+
+        <Tabs
+          allowScrollButtonsMobile
+          variant="scrollable"
+          scrollButtons="auto"
+          value={valueTab}
+          onChange={(event, newValue) => setValueTab(newValue)}
+          sx={{ bgcolor: 'background.neutral' }}
+        >
+          {TABS.map((tab) => (
+            <Tab
+              disableRipple
+              key={tab.value}
+              value={tab.value}
+              // icon={<Label color={tab.color}> {tab.count} </Label>}
+              label={<Typography variant="h7" component="div">
+                <Label color={tab.color}> {tab.count}  </Label>
+                {tab.label}
+              </Typography>}
+              onClick={() => {
+                setFilterName('');
+                setStatusJobPost(tab.value);
+              }}
+            />
+          ))}
         </Tabs>
 
         <TabPanel value={valueTab} index={0}>

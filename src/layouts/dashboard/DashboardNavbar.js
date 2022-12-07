@@ -76,15 +76,15 @@ export default function DashboardNavbar({ onOpenSidebar, company }) {
           <Box sx={{ flexGrow: 1 }} />
 
           <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-            {localStorage.getItem('company_id') && (
+            {localStorage.getItem('role') === 'COMPANY' && (
               <>
                 <Iconify icon='dashicons:money-alt' color='#2065D1' sx={{ width: 30, height: 30 }} />
                 <Typography color='#2065D1' variant='h5' gutterBottom>{money}</Typography>
                 <Button color='secondary' variant='contained' onClick={() => navigate('/dashboard/deposit')}>Nạp tiền</Button>
                 {/* <LanguagePopover /> */}
-                <NotificationsPopover />
               </>
             )}
+            <NotificationsPopover />
             <AccountPopover company={company} />
           </Stack>
         </ToolbarStyle >

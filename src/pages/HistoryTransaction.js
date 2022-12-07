@@ -47,8 +47,8 @@ export default function HistoryTransaction() {
           <HeaderBreadcrumbs
             heading="Lịch sử giao dịch"
             links={[
-              { name: 'Trang chủ', href: '/dashboard/app' },
-              { name: 'Lịch sử giao dịch', href: '/dashboard/history-transaction' },
+              { name: 'Trang chủ', href: '/company/dashboard' },
+              { name: 'Lịch sử giao dịch', href: '/company/history-transaction' },
             ]}
           />
         </Stack>
@@ -317,8 +317,8 @@ function HistoryTransactionTable({ value }) {
             </Table>
           </TableContainer>
           <TablePagination
-          labelRowsPerPage={'Số hàng mỗi trang'}
-          labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
+            labelRowsPerPage={'Số hàng mỗi trang'}
+            labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={dataFiltered.length}

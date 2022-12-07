@@ -14,26 +14,21 @@ import { reset as resetMoney } from '../../slices/moneySlice';
 // ----------------------------------------------------------------------
 
 let MENU_OPTIONS = [
-  // {
-  //   label: 'Home',
-  //   icon: 'eva:home-fill',
-  //   linkTo: '/',
-  // },
+  {
+    label: 'Thông tin nhân viên',
+    icon: 'eva:home-fill',
+    linkTo: '/employee/information',
+  },
   {
     label: 'Thông tin công ty',
     icon: 'eva:person-fill',
-    linkTo: '/dashboard/profile',
+    linkTo: '/profile',
   },
   {
     label: 'Đổi mật khẩu',
     icon: 'eva:person-fill',
-    linkTo: '/dashboard/change-password',
+    linkTo: '/change-password',
   },
-  // {
-  //   label: 'Settings',
-  //   icon: 'eva:settings-2-fill',
-  //   linkTo: '#',
-  // },
 ];
 
 // ----------------------------------------------------------------------
@@ -55,28 +50,20 @@ export default function AccountPopover({ company }) {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('company_id')) {
-      MENU_OPTIONS = [
-        {
-          label: 'Đổi mật khẩu',
-          icon: 'eva:person-fill',
-          linkTo: '/dashboard/change-password',
-        },
-      ];
-    } else {
+    const role = localStorage.getItem('role');
+    if (role === 'COMPANY') {
       MENU_OPTIONS = [
         {
           label: 'Thông tin công ty',
           icon: 'eva:person-fill',
-          linkTo: '/dashboard/profile',
+          linkTo: '/profile',
         },
         {
           label: 'Đổi mật khẩu',
           icon: 'eva:person-fill',
-          linkTo: '/dashboard/change-password',
+          linkTo: '/change-password',
         },
       ];
-
     }
   }, []);
 

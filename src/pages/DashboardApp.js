@@ -47,6 +47,7 @@ export default function DashboardApp() {
   }, []);
 
   useEffect(() => {
+    if(localStorage.getItem('role') === 'COMPANY' ){
     axios({
       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}`,
       method: 'get',
@@ -86,6 +87,48 @@ export default function DashboardApp() {
     }).then((response) => {
       setCountPostingJobPost(response.data.data?.length);
     }).catch(error => console.log(error));
+  }
+  if(localStorage.getItem('role') === 'EMPLOYEE' ){
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setListJobPost(response.data.data);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=0`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setCountActiveJobPost(response.data.data?.length);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=1`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setCountHiddenJobPost(response.data.data?.length);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=4`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setCountPostingJobPost(response.data.data?.length);
+    }).catch(error => console.log(error));
+  }
   }, []);
 
   return (

@@ -75,7 +75,7 @@ export default function Login() {
   const [loadingButtonConfirm, setLoadingButtonConfirm] = useState(false);
   const [disableButtonConfirm, setDisableButtonConfirm] = useState(true);
   // const [openBackdrop, setOpenBackdrop] = useState(false);
-  const getQueryParam = getQueryParams();
+  // const getQueryParam = getQueryParams();
 
   const smUp = useResponsive('up', 'sm');
 
@@ -83,38 +83,38 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const handleErrorLogin = (error, email) => {
-    console.log(error.response.data.detail);
-    if (error.response.data.detail.trim() === 'Your account is not verified by email!!!') {
-      setEmail(email);
-      axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_CODE_CONFIRM_MAIL}?email=${email}`,
-        method: 'POST',
-        // headers: {
-        //   Authorization: `Bearer ${token}`
-        // },
-      }).then(() => setOpenDialogConfirmMail(true))
-        .catch(error => {
-          console.log(error);
-          setSeverity('error');
-          setMessageAlert('Gửi email xác thực không thành công');
-          setOpenAlert(true);
-        });
-    }
-    if (error.response.data.detail.trim() === 'Your account is not verified by admin!!!') {
-      setSeverity('error');
-      setMessageAlert('Tài khoản của bạn chưa được xác thực bởi Admin');
-      setOpenAlert(true);
-    }
-  };
+  // const handleErrorLogin = (error, email) => {
+  //   console.log(error.response.data.detail);
+  //   if (error.response.data.detail.trim() === 'Your account is not verified by email!!!') {
+  //     setEmail(email);
+  //     axios({
+  //       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_CODE_CONFIRM_MAIL}?email=${email}`,
+  //       method: 'POST',
+  //       // headers: {
+  //       //   Authorization: `Bearer ${token}`
+  //       // },
+  //     }).then(() => setOpenDialogConfirmMail(true))
+  //       .catch(error => {
+  //         console.log(error);
+  //         setSeverity('error');
+  //         setMessageAlert('Gửi email xác thực không thành công');
+  //         setOpenAlert(true);
+  //       });
+  //   }
+  //   if (error.response.data.detail.trim() === 'Your account is not verified by admin!!!') {
+  //     setSeverity('error');
+  //     setMessageAlert('Tài khoản của bạn chưa được xác thực bởi Admin');
+  //     setOpenAlert(true);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (getQueryParam?.status === 'verified') {
-      setSeverity('success');
-      setMessageAlert('Xác thực email thành công');
-      setOpenAlert(true);
-    }
-  }, [getQueryParam?.status]);
+  // useEffect(() => {
+  //   if (getQueryParam?.status === 'verified') {
+  //     setSeverity('success');
+  //     setMessageAlert('Xác thực email thành công');
+  //     setOpenAlert(true);
+  //   }
+  // }, [getQueryParam?.status]);
 
 
   return (
@@ -172,7 +172,7 @@ export default function Login() {
         </Alert>
       </Snackbar>
 
-      <Dialog
+      {/* <Dialog
         open={openDialogConfirmMail}
         onClose={() => setOpenDialogConfirmMail(false)}
       >
@@ -238,7 +238,7 @@ export default function Login() {
             }}>Hoàn thành</LoadingButton>
           </DialogActions>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {/* <Backdrop open={openBackdrop} sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <CircularProgress color="inherit" />

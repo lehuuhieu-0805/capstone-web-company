@@ -67,8 +67,8 @@ export default function Deposit() {
           <HeaderBreadcrumbs
             heading="Nạp tiền"
             links={[
-              { name: 'Trang chủ', href: '/dashboard/app' },
-              { name: 'Nạp tiền', href: '/dashboard/deposit' },
+              { name: 'Trang chủ', href: '/company/dashboard' },
+              { name: 'Nạp tiền', href: '/company/deposit' },
             ]}
           />
         </Stack>

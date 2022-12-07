@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Avatar, Box, Button, Dialog, DialogActions, DialogTitle, Drawer, Link, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, Chip, Dialog, DialogActions, DialogTitle, Drawer, Grid, Link, Stack, Typography } from '@mui/material';
 // material
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
@@ -16,7 +16,8 @@ import { api } from '../../constants';
 import useResponsive from '../../hooks/useResponsive';
 import { updatePremium } from '../../slices/premiumSlice';
 //
-import navConfig from './NavConfig';
+// import navConfig from './NavConfig';
+import Iconify from '../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +36,10 @@ const AccountStyle = styled('div')(({ theme }) => ({
   padding: theme.spacing(2, 2.5),
   borderRadius: Number(theme.shape.borderRadius) * 1.5,
   backgroundColor: theme.palette.grey[500_12],
+  maxWidth: 250,
 }));
+
+const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 // ----------------------------------------------------------------------
 
@@ -44,7 +48,9 @@ DashboardSidebar.propTypes = {
   onCloseSidebar: PropTypes.func,
 };
 
-export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, company }) {
+let navConfig = [];
+
+export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, company, employee }) {
   const { pathname } = useLocation();
   const [loadingButton, setLoadingButton] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -64,12 +70,69 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
   }, [pathname]);
 
   useEffect(() => {
+    const role = localStorage.getItem('role');
+
+    switch (role) {
+      case 'EMPLOYEE':
+        navConfig = [
+          {
+            title: 'dashboard',
+            path: '/employee/dashboard',
+            icon: getIcon('eva:pie-chart-2-fill'),
+          },
+          {
+            title: 'Bài viết tuyển dụng',
+            path: '/employee/job-post',
+            icon: getIcon('bi:file-earmark-post-fill'),
+          },
+        ];
+        break;
+      case 'COMPANY':
+        navConfig = [
+          {
+            title: 'dashboard',
+            path: '/company/dashboard',
+            icon: getIcon('eva:pie-chart-2-fill'),
+          },
+          {
+            title: 'Bài viết tuyển dụng',
+            path: '/company/job-post',
+            icon: getIcon('eva:file-text-fill'),
+          },
+          {
+            title: 'Nạp tiền',
+            path: '/company/deposit',
+            icon: getIcon('uil:money-insert'),
+          },
+          {
+            title: 'Quản lý nhân viên',
+            path: '/company/employee',
+            icon: getIcon('eva:people-fill'),
+          },
+          {
+            title: 'Lịch sử giao dịch',
+            path: '/company/history-transaction',
+            icon: getIcon('icon-park-outline:transaction'),
+          },
+          {
+            title: 'Lịch sử kết nối',
+            path: '/company/history-matching',
+            icon: getIcon('mdi:user-check'),
+          },
+        ];
+        break;
+
+      default:
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
     if (company) {
       const action = updatePremium(company.is_premium);
       dispatch(action);
     }
   }, [company, dispatch]);
-
   const renderContent = (
     <Scrollbar
       sx={{
@@ -82,19 +145,47 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
       </Box>
 
       <Box sx={{ mb: 5, mx: 2.5 }}>
-        <Link underline="none" component={RouterLink} to="#">
+        {/* <Link underline="none" component={RouterLink} to="#"> */}
+        <AccountStyle>
+          <Avatar src={company?.logo} alt="photoURL" />
+          <Box sx={{ ml: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+              {company?.name}
+            </Typography>
+          </Box>
+        </AccountStyle>
+        {/* </Link> */}
+        <Box sx={{ mt: 2 }}>
           <AccountStyle>
-            <Avatar src={company?.logo} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {company?.name}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {company?.email}
-              </Typography>
+              {(() => {
+                if (localStorage.getItem('role') === 'COMPANY') {
+                  return (
+                    <Grid item xs={12}>
+                      <h4> Quản lý</h4>
+                      <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+                        {company?.email}
+                      </Typography>
+                    </Grid>
+                  );
+                }
+                return (
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+                      {employee?.name} (Nhân viên)
+                    </Typography>
+                    <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+                      {employee?.email}
+                    </Typography>
+                  </Grid>
+                );
+
+
+              })()}
             </Box>
           </AccountStyle>
-        </Link>
+        </Box>
+
       </Box>
 
       <NavSection navConfig={navConfig} />
@@ -102,33 +193,35 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
       <Box sx={{ flexGrow: 1 }} />
 
 
-      <Box sx={{ px: 1.5, pb: 3, mt: 10 }}>
-        <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-          <Box
-            component="img"
-            src="https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2Ffind-applicant.png?alt=media&token=5701d0af-94b1-4aaa-8ef3-48d718d6144a"
-            sx={{ width: 100, position: 'absolute', top: -50 }}
-          />
+      {localStorage.getItem('role') === 'COMPANY' ? (
+        <Box sx={{ px: 1.5, pb: 3, mt: 10 }}>
+          <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
+            <Box
+              component="img"
+              src="https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2Ffind-applicant.png?alt=media&token=5701d0af-94b1-4aaa-8ef3-48d718d6144a"
+              sx={{ width: 100, position: 'absolute', top: -50 }}
+            />
 
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography gutterBottom variant="h6">
-              Bạn muốn tìm kiếm ứng viên?
-            </Typography>
-            {/* <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography gutterBottom variant="h6">
+                Bạn muốn tìm kiếm ứng viên?
+              </Typography>
+              {/* <Typography variant="body1" sx={{ color: 'text.secondary' }}>
                 Giá chỉ 5000
               </Typography> */}
-          </Box>
-          {isPremium ? (
-            <Button variant="contained" disabled onClick={() => setOpenDialog(true)}>
-              Bạn đã nâng cấp premium
-            </Button>
-          ) : (
-            <Button variant="contained" disabled={!localStorage.getItem('company_id')} onClick={() => setOpenDialog(true)}>
-              Nâng cấp premium
-            </Button>
-          )}
-        </Stack>
-      </Box>
+            </Box>
+            {isPremium ? (
+              <Button variant="contained" disabled onClick={() => setOpenDialog(true)}>
+                Bạn đã nâng cấp premium
+              </Button>
+            ) : (
+              <Button variant="contained" disabled={!localStorage.getItem('company_id')} onClick={() => setOpenDialog(true)}>
+                Nâng cấp premium
+              </Button>
+            )}
+          </Stack>
+        </Box>
+      ) : null}
 
 
       <Dialog
