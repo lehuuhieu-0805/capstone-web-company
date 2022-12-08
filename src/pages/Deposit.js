@@ -39,7 +39,12 @@ export default function Deposit() {
   }, []);
 
   const onSubmit = () => {
-    if (!error.error) {
+    if (money === '') {
+      setError({
+        message: '*Vui lòng nhập số tiền cần nạp',
+        error: true
+      });
+    } else if (!error.error) {
       setLoadingButton(true);
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_VNPAY}?ip='::1'&companyId=${localStorage.getItem('company_id')}&amount=${money.replaceAll('.', '')}`,

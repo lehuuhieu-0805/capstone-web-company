@@ -32,6 +32,7 @@ EmployeeTableRow.propTypes = {
 };
 
 export default function EmployeeTableRow({ row, onDeleteRow }) {
+  const token = localStorage.getItem('token');
   // const { id, name } = row;
 
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
@@ -45,6 +46,9 @@ export default function EmployeeTableRow({ row, onDeleteRow }) {
     axios({
       url: `https://stg-api-itjob.unicode.edu.vn/api/v1/employees/${row.id}`,
       method: 'delete',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
     })
       .then((response) => {
         console.log(response);
@@ -64,7 +68,7 @@ export default function EmployeeTableRow({ row, onDeleteRow }) {
 
       <TableCell align="left">
 
-        <Tooltip title="Xoá">
+        {/* <Tooltip title="Xoá">
           <IconButton
             onClick={() => {
               setOpenDialogDelete(true);
@@ -73,7 +77,10 @@ export default function EmployeeTableRow({ row, onDeleteRow }) {
           >
             <Iconify icon={'mdi:trash-can-circle'} color="error" />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
+        <Button variant='outlined' color='error' onClick={() => {
+          setOpenDialogDelete(true);
+        }}>Xoá</Button>
       </TableCell>
 
       <Dialog
@@ -86,7 +93,7 @@ export default function EmployeeTableRow({ row, onDeleteRow }) {
       >
         <DialogTitle id="alert-dialog-title">Bạn có chắc chắn muốn xoá tài khoản  "{row.name}" ra khỏi công ty ?</DialogTitle>
         <DialogActions>
-          <Button color="inherit" onClick={handleCloseDialogDelete} variant="outlined">
+          <Button onClick={handleCloseDialogDelete} variant="outlined">
             Huỷ
           </Button>
           <Button
@@ -97,7 +104,7 @@ export default function EmployeeTableRow({ row, onDeleteRow }) {
             variant="contained"
             color="primary"
           >
-            Xoá
+            Xác nhận
           </Button>
         </DialogActions>
       </Dialog>

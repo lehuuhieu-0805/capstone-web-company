@@ -66,7 +66,7 @@ export default function DashboardLayout() {
   }, [dispatch]);
   useEffect(() => {
     setOpenBackDrop(true);
-    if (localStorage.getItem('user_id')) {
+    if (localStorage.getItem('role') === 'EMPLOYEE') {
       axios({
         url: `https://stg-api-itjob.unicode.edu.vn/api/v1/employees/${localStorage.getItem('user_id')}`,
         method: 'get',

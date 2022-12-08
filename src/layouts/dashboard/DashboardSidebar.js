@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Avatar, Box, Button, Chip, Dialog, DialogActions, DialogTitle, Drawer, Grid, Link, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Drawer, Grid, Link, Stack, Typography } from '@mui/material';
 // material
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
@@ -51,6 +51,7 @@ DashboardSidebar.propTypes = {
 let navConfig = [];
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, company, employee }) {
+  const token = localStorage.getItem('token');
   const { pathname } = useLocation();
   const [loadingButton, setLoadingButton] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -235,6 +236,13 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
         <DialogTitle id="alert-dialog-title">
           Bạn chắc chắn muốn nâng cấp tài khoản lên premium với phí là 5000?
         </DialogTitle>
+        <DialogContent>
+          <Typography variant='subtitle1' gutterBottom>Khi bạn nâng cấp tài khoản lên premium:</Typography>
+          <ul>
+            <li><Typography variant='body2' gutterBottom>Hệ thống sẽ gợi ý những ứng viên phù hợp với bài viết tuyển dụng</Typography></li>
+            <li><Typography variant='body2' gutterBottom>Dễ dàng tìm kiếm được những ứng viên phù hợp cho bài viết tuyển dụng</Typography></li>
+          </ul>
+        </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} variant='outlined'>Đóng</Button>
           <LoadingButton loading={loadingButton} onClick={() => {
@@ -256,9 +264,9 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
                 axios({
                   url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_UPGRADE_COMPANY}?id=${localStorage.getItem('company_id')}`,
                   method: 'put',
-                  // headers: {
-                  //   Authorization: `Bearer ${token}`
-                  // },
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  },
                   data: {
                     id: localStorage.getItem('company_id'),
                     is_premium: true

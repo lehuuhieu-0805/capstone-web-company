@@ -17,6 +17,8 @@ import { api } from "../../../constants";
 import { minusMoney } from '../../../slices/moneySlice';
 
 export default function TableListJobPost(props) {
+  const token = localStorage.getItem('token');
+
   const { loadingData, sortCreateDate, handleChangeSortCreateDate, listJobPost, totalRow, rowsPerPage, page, handleChangePage, handleChangeRowsPerPage, handleEditJobPost, statusJobPost, handleOpenDialogHidden, filterName, handleFilterName, setOpenAlert, setSeverity, setAlertMessage, setRefreshData, refreshData } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -71,7 +73,8 @@ export default function TableListJobPost(props) {
                       {statusJobPost !== 2 && statusJobPost !== 3 && (<TableCell >Ngày duyệt</TableCell>)}
                       {statusJobPost === 0 && (<TableCell >Ngày kết thúc</TableCell>)}
                       {statusJobPost === 3 && (<TableCell >Lý do</TableCell>)}
-                      <TableCell>Tagent coin</TableCell>
+
+                      {statusJobPost !== 1 && statusJobPost !== 3 && (<TableCell>Tagent coin</TableCell>)}
                       <TableCell align="right">Hành động</TableCell>
                     </TableRow>
                   </TableHead>
@@ -89,7 +92,8 @@ export default function TableListJobPost(props) {
                         {statusJobPost !== 2 && statusJobPost !== 3 && (<TableCell >{jobPost?.approve_date ? dayjs(jobPost.approve_date).format('DD-MM-YYYY HH:mm:ss') : null}</TableCell>)}
                         {statusJobPost === 0 && (<TableCell >{jobPost?.end_time ? dayjs(jobPost.end_time).format('DD-MM-YYYY') : null}</TableCell>)}
                         {statusJobPost === 3 && (<TableCell >{jobPost.reason}</TableCell>)}
-                        <TableCell>{jobPost.money}</TableCell>
+                        {statusJobPost !== 1 && statusJobPost !== 3 && (<TableCell>{jobPost.money}</TableCell>)}
+
                         <TableCell align="right">
                           <IconButton
                             aria-label="more"
@@ -151,7 +155,7 @@ export default function TableListJobPost(props) {
                   </LocalizationProvider>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={() => {
+                  <Button variant='outlined' onClick={() => {
                     setOpenDialogChangeDate(false);
                     setChangeDateValue(dayjs().add(1, 'day'));
                   }}>
@@ -171,9 +175,9 @@ export default function TableListJobPost(props) {
                       axios({
                         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_JOBPOST}/${jobPostId}`,
                         method: 'put',
-                        // headers: {
-                        //   Authorization: `Bearer ${token}`,
-                        // },
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
                         data: jobpost
                       }).then(() => {
                         setSeverity('success');
@@ -244,6 +248,9 @@ export default function TableListJobPost(props) {
                     axios({
                       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_UPDATE_MONEY}/${jobPostId}`,
                       method: 'put',
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },
                       data: {
                         id: jobPostId,
                         money_for_job_post: changeMoney.replace('.', '')

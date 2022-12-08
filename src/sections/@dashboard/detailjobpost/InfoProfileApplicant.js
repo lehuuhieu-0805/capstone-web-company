@@ -50,7 +50,8 @@ export default function InfoProfileApplicant({ profileApplicant, applicant, jobP
                 />
                 <Typography color='black' variant="h4">{applicant?.name}</Typography>
                 <Typography color='black' sx={{ opacity: 0.72 }}>{jobPosition?.name}</Typography>
-                <Button variant='outlined' style={{ position: 'absolute', right: 10, bottom: 10 }} onClick={() => setOpenDialog(true)}>Chặn</Button>
+                {/* <Typography color='black' sx={{ opacity: 0.72 }}>{jobPosition?.name}</Typography> */}
+                {/* <Button variant='outlined' style={{ position: 'absolute', right: 10, bottom: 10 }} onClick={() => setOpenDialog(true)}>Chặn</Button> */}
               </Box>
             </Card>
           </Stack>
@@ -69,49 +70,7 @@ export default function InfoProfileApplicant({ profileApplicant, applicant, jobP
           </Stack>
         </Grid>
       </Grid>
-      <Dialog open={openDialog}>
-        <DialogTitle>
-          {"Bạn có chắc chắn muốn chặn ứng viên này?"}
-        </DialogTitle>
-        <DialogActions>
-          <Button variant='outlined' onClick={() => setOpenDialog(false)}>Huỷ</Button>
-          <LoadingButton loading={loadingButton} variant='contained' onClick={() => {
-            setLoadingButton(true);
-            axios({
-              url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}/${jobPostId}`,
-              method: 'get',
-              // headers: {
-              //   Authorization: `Bearer ${token}`,
-              // },
-            }).then((response) => {
-              axios({
-                url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_BLOCK}`,
-                method: 'post',
-                // headers: {
-                //   Authorization: `Bearer ${token}`,
-                // },
-                data: {
-                  company_id: response.data.data.company_id,
-                  applicant_id: applicant.id,
-                  block_by: response.data.data.company_id
-                }
-              }).then(() => {
-                setLoadingButton(false);
-                setAlertMessage('Chặn ứng viên thành công');
-                setSeverity('success');
-                setOpenAlert(true);
-                handleCloseDialog();
-              }).catch((error) => {
-                console.log(error);
-                setLoadingButton(false);
-                setAlertMessage('Có lỗi xảy ra');
-                setSeverity('error');
-                setOpenAlert(true);
-              });
-            }).catch(error => console.log(error));
-          }}>Xác nhận</LoadingButton>
-        </DialogActions>
-      </Dialog>
+     
     </Container >
   );
 }

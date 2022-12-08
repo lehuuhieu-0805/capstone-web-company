@@ -5,7 +5,8 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 //
 import App from './App';
 import store from './app/store';
@@ -19,9 +20,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <HelmetProvider>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
+      </LocalizationProvider>
     </HelmetProvider>
   </Provider>
 );

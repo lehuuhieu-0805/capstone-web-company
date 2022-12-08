@@ -209,6 +209,12 @@ export default function DetailJobPost() {
                           {jobPostDetail?.working_place}
                         </Typography>
                       </Grid>
+                      <Grid item xs={12}>
+                        <Typography variant='h7' component='div'>
+                          <Box display='inline' fontWeight='fontWeightBold'>Số dư: {' '}</Box>
+                          {jobPostDetail?.money} coin
+                        </Typography>
+                      </Grid>
                     </Grid>
                   </CardContent>
                 </Card>
@@ -248,7 +254,10 @@ export default function DetailJobPost() {
                   <CardContent>
                     <Grid item xs={12}>
                       <h4 style={{ marginRight: 10 }}>Kĩ năng:</h4>
-                      {skillDetail.map((element, index) => <h4 style={{ fontWeight: 'normal', marginRight: 20 }} key={index}>{element.skill} - {element.skillLevel}</h4>)}
+                      {skillDetail.map((element, index) => <Stack key={element.id} spacing={15} direction="row">
+                        <Typography variant="body2">•Ngôn ngữ: {element.skill}</Typography>
+                        <Typography variant="body2">Trình độ : {element.skillLevel}</Typography>
+                      </Stack>)}
                     </Grid>
                   </CardContent>
                 </Card>
@@ -258,7 +267,9 @@ export default function DetailJobPost() {
               <>
                 <Tabs sx={{ mt: 3 }} value={value} onChange={(event, newValue) => setValue(newValue)} aria-label="basic tabs example">
                   <Tab label='Tiềm năng' id='simple-tab-0' aria-controls='simple-tabpanel-0'
-                    disabled={jobPostDetail.status !== 0 && !company?.is_premium || !company?.is_premium}
+                    // {...(jobPostDetail.status !== 0 || !company?.is_premium && { disabled: true })}
+                    disabled={!!((jobPostDetail.status !== 0 || !company?.is_premium))}
+                  // disabled={jobPostDetail.status === 1 && company?.is_premium}
 
                   // {...( (jobPostDetail.status !== 0 && jobPostDetail.status !== 1 ) || !company?.is_premium && { disabled: true })} 
 

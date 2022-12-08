@@ -20,11 +20,12 @@ const schema = yup.object({
   name: yup.string().nullable().required('*Vui lòng nhập tên công ty'),
   website: yup.string().nullable().required('*Vui lòng nhập địa chỉ website'),
   email: yup.string().nullable().email('*Email không đúng định dạng').required('*Vui lòng nhập địa chỉ email'),
-  phone: yup.string().nullable().typeError('*Số điện thoại sai định dạng').required('*Vui lòng nhập số điện thoại'),
+  phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").min(10, 'Số điện thoại không hợp lệ').max(10, 'Số điện thoại không hợp lệ'),
   description: yup.string().nullable().required('*Vui lòng nhập mô tả')
 });
 
 export default function Profile() {
+  const token = localStorage.getItem('token');
   const [disabled, setDisabled] = useState(true);
   const [showButtonEdit, setShowButtonEdit] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
@@ -106,10 +107,10 @@ export default function Profile() {
     axios({
       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_COMPANY}/${companyId}`,
       method: 'put',
-      // headers: {
-      //   Authorization: `Bearer ${token}`
-      // },
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
       data: formData
     }).then(() => {
       axios({

@@ -33,7 +33,7 @@ import '../index.css';
 
 
 const schema = yup.object().shape({
-  title: yup.string().nullable().required('*Vui lòng nhập tiêu đề bài viết tuyển dụng'),
+  title: yup.string().nullable().required('*Vui lòng nhập tiêu đề bài viết tuyển dụng').max(100, 'Tối đa 100 kí tự'),
   quantity: yup.number().typeError('*Vui lòng nhập số lượng ứng viên').positive('*Số lượng ứng viên không hợp lệ').nullable().required('*Vui lòng nhập số lượng ứng viên'),
 });
 
@@ -46,6 +46,8 @@ let oldFileUrlImage = [];
 let listSkillFilter = [];
 
 export default function CreateJobPost() {
+  const token = localStorage.getItem('token');
+
   const [defaultStartDay, setDefaultStartDay] = useState(dayjs());
   const [defaultEndDay, setDefaultEndDay] = useState(defaultStartDay.add(1, 'day'));
   const [startDay, setStartDay] = useState(defaultStartDay);
@@ -483,9 +485,9 @@ export default function CreateJobPost() {
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_JOBPOST}`,
         method: 'post',
-        // headers: {
-        //   'Authorization': `Bearer ${token}`
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         data: {
           title: data.title,
           description,
@@ -506,9 +508,9 @@ export default function CreateJobPost() {
           axios({
             url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_JOBPOSTSKILL}`,
             method: 'post',
-            // headers: {
-            //   'Authorization': `Bearer ${token}`
-            // },
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
             data: {
               job_post_id: data.id,
               skill_id: value.skill_id,
@@ -523,9 +525,9 @@ export default function CreateJobPost() {
             axios({
               url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_URL_ALBUMIMAGE}`,
               method: 'post',
-              // headers: {
-              //   'Authorization': `Bearer ${token}`
-              // },
+              headers: {
+                Authorization: `Bearer ${token}`
+              },
               data: {
                 job_post_id: data.id,
                 url_image: item.url_image,
@@ -580,9 +582,9 @@ export default function CreateJobPost() {
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_JOBPOST}/${data.id}`,
         method: 'put',
-        // headers: {
-        //   'Authorization': `Bearer ${token}`
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         data: {
           id: data.id,
           title: data.title,
@@ -606,9 +608,9 @@ export default function CreateJobPost() {
           axios({
             url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.DELETE_JOBPOSTSKILL}/${item.job_post_skill_id}`,
             method: 'delete',
-            // headers: {
-            //   'Authorization': `Bearer ${token}`
-            // },
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
           }).catch(error => console.log(error));
         })).catch(error => console.log(error));
 
@@ -616,9 +618,9 @@ export default function CreateJobPost() {
           axios({
             url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_JOBPOSTSKILL}`,
             method: 'post',
-            // headers: {
-            //   'Authorization': `Bearer ${token}`
-            // },
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
             data: {
               job_post_id: data.id,
               skill_id: item.skill_id,
@@ -639,9 +641,9 @@ export default function CreateJobPost() {
             axios({
               url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.DELETE_ALBUMIMAGE}/${item.id}`,
               method: 'delete',
-              // headers: {
-              //   'Authorization': `Bearer ${token}`
-              // },
+              headers: {
+                Authorization: `Bearer ${token}`
+              },
             }).catch(error => console.log(error));
           });
 
@@ -655,9 +657,9 @@ export default function CreateJobPost() {
           axios({
             url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_ALBUMIMAGE}`,
             method: 'post',
-            // headers: {
-            //   'Authorization': `Bearer ${token}`
-            // },
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
             data: formData
           }).then(() => {
             setLoadingButton(false);

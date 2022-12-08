@@ -24,6 +24,8 @@ import {
   TableRow,
   TableCell,
   Typography,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 
 // hooks
@@ -47,7 +49,21 @@ const TABLE_HEAD = [
   { id: 'no', label: 'No.', align: 'left' },
   { id: 'title', label: 'Tiêu đề', align: 'left' },
   { id: 'create_date', label: 'Ngày tạo', align: 'left' },
+  { id: 'start_date', label: 'Ngày bắt đầu', align: 'left' },
+  { id: 'end_date', label: 'Ngày hết hạn', align: 'left' },
   { id: 'employee', label: 'Người tạo', align: 'left' },
+  { id: 'status', label: 'Trạng thái', align: 'left' },
+  { id: 'action', label: 'Hành động', align: 'left' },
+];
+
+const TABLE_HEAD_FOR_CANCEL = [
+  { id: 'no', label: 'No.', align: 'left' },
+  { id: 'title', label: 'Tiêu đề', align: 'left' },
+  { id: 'create_date', label: 'Ngày tạo', align: 'left' },
+  { id: 'start_date', label: 'Ngày bắt đầu', align: 'left' },
+  { id: 'end_date', label: 'Ngày hết hạn', align: 'left' },
+  { id: 'employee', label: 'Người tạo', align: 'left' },
+  { id: 'reason', label: 'Lý do', align: 'left' },
   { id: 'status', label: 'Trạng thái', align: 'left' },
   { id: 'action', label: 'Hành động', align: 'left' },
 ];
@@ -56,6 +72,8 @@ const TABLE_HEAD_FOR_APPROVE = [
   { id: 'no', label: 'No.', align: 'left' },
   { id: 'title', label: 'Tiêu đề', align: 'left' },
   { id: 'create_date', label: 'Ngày tạo', align: 'left' },
+  { id: 'start_date', label: 'Ngày bắt đầu', align: 'left' },
+  { id: 'end_date', label: 'Ngày hết hạn', align: 'left' },
   { id: 'employee', label: 'Người tạo', align: 'left' },
   { id: 'money', label: 'Tagent coin', align: 'left' },
   { id: 'status', label: 'Trạng thái', align: 'left' },
@@ -72,8 +90,23 @@ export default function CompanyJobPost() {
   const [severity, setSeverity] = useState('success');
   const [messageAlert, setMessageAlert] = useState('');
 
+  const [lengthJobPostActive, setLengthJobPostActive] = useState(0);
+  const [lengthJobPostHidden, setLengthJobPostHidden] = useState(0);
+  const [lengthJobPostPending, setLengthJobPostPending] = useState(0);
+  const [lengthJobPostCancel, setLengthJobPostCancel] = useState(0);
+  const [lengthJobPostPosting, setLengthJobPostPosting] = useState(0);
+  const [lengthJobPost, setLengthJobPost] = useState(0);
+  const [statusJobPost, setStatusJobPost] = useState(5);
+  const [valueTab, setValueTab] = useState(5);
+
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(5);
+  // const [totalRow, setTotalRow] = useState();
+
   const [openAlert, setOpenAlert] = useState(false);
-  const { currentTab: filterStatus, onChangeTab: onFilterStatus } = useTabs(5);
+  const [filterName, setFilterName] = useState('');
+
+  // const { currentTab: filterStatus, onChangeTab: onFilterStatus } = useTabs(5);
   const {
     dense,
     page,
@@ -92,29 +125,134 @@ export default function CompanyJobPost() {
     onChangeRowsPerPage,
   } = useTable();
 
+  // const debounceJobPost = useCallback(debounce((nextValue) => {
+  //   setLoadingData(true);
+  //   axios({
+  //     url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&page=${page + 1}&page-size=${rowsPerPage}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}${nextValue ? `&title=${nextValue}` : ''}&status=${statusJobPost}`,
+  //     method: 'get',
+  //     // headers: {
+  //     //   'Authorization': `Bearer ${token}`
+  //     // },
+  //   }).then((response) => {
+  //     setListJobPost(response.data?.data);
+
+  //     axios({
+  //       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&sort-key=CreateDate&sort-order=${sortCreateDate}&status=${statusJobPost}${nextValue ? `&title=${nextValue}` : ''}&status=${statusJobPost}`,
+  //       method: 'get',
+  //       // headers: {
+  //       //   'Authorization': `Bearer ${token}`
+  //       // },
+  //     }).then((response) => {
+  //       setTotalRow(response.data.data?.length);
+  //       setLoadingData(false);
+  //     }).catch(error => console.log(error));
+
+  //   }).catch(error => console.log(error));
+  // }, 1000), []);
+
+  // const handleFilterName = (newFilterName) => {
+  //   setFilterName(newFilterName);
+  //   // if (newFilterName) {
+  //   debounceJobPost(newFilterName);
+  //   // }
+  // };
+
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
+
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
+  };
   useEffect(() => {
     // setLoadingButton(true)
     axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/job-posts?companyId=${localStorage.getItem('company_id')}`,
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/job-posts?companyId=${localStorage.getItem('company_id')}&status=${statusJobPost === 5 ? '' : statusJobPost}`,
       method: 'get',
-    })
-      .then((response) => {
-        if (response.data === "") {
-          setTableData([]);
-          setLoadingData(false);
-          console.log(response);
-          setRefreshData(false);
-        } else {
-          setTableData(response.data.data);
-          setLoadingData(false);
-          console.log(response);
-          setRefreshData(false);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [refreshdata]);
+    }).then((response) => {
+      console.log(response);
+      if (response.data === "") {
+        setTableData([]);
+        setLoadingData(false);
+        setRefreshData(false);
+      } else {
+        setTableData(response.data.data);
+        setLoadingData(false);
+        setRefreshData(false);
+      }
+    }).catch((error) => {
+      console.log(error);
+    });
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&status=4`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostPosting(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&status=0`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostActive(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&status=1`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostHidden(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&status=2`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostPending(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}&status=3`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPostCancel(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?companyId=${localStorage.getItem('company_id')}`,
+      method: 'get',
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+    }).then((response) => {
+      setLengthJobPost(response.data.data?.length || 0);
+    }).catch(error => console.log(error));
+
+  }, [refreshdata, statusJobPost]);
 
   const handleJobPostRow = (id) => {
 
@@ -157,7 +295,6 @@ export default function CompanyJobPost() {
     }
 
   };
-  const [filterName, setFilterName] = useState('');
 
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
@@ -169,16 +306,26 @@ export default function CompanyJobPost() {
     tableData,
     comparator: getComparator(order, orderBy),
     filterName,
-    filterStatus,
+    valueTab,
   });
-  const getLengthByStatus = (status) => tableData.filter((item) => item.status === status).length;
+
+  // const getLengthByStatus = (status) => tableData.filter((item) => item.status === status).length;
+
+  // const TABS = [
+  //   { value: 5, label: 'Tất cả', color: 'info', count: tableData.length },
+  //   { value: 0, label: 'Đang hoạt động', color: 'success', count: getLengthByStatus(0) },
+  //   { value: 4, label: 'Chờ hoạt động', color: 'warning', count: getLengthByStatus(4) },
+  //   { value: 1, label: 'Đã ẩn', color: 'error', count: getLengthByStatus(1) },
+  //   { value: 2, label: 'Đang đợi duyệt', color: 'warning', count: getLengthByStatus(2) },
+  // ];
 
   const TABS = [
-    // { value: 5, label: 'Tất cả', color: 'info', count: tableData.length },
-    { value: 0, label: 'Đang hoạt động', color: 'error', count: getLengthByStatus(0) },
-    { value: 4, label: 'Chờ hoạt động', color: 'error', count: getLengthByStatus(4) },
-    { value: 1, label: 'Đã ẩn', color: 'success', count: getLengthByStatus(1) },
-    { value: 2, label: 'Đang đợi duyệt', color: 'warning', count: getLengthByStatus(2) },
+    { value: 5, label: 'Tất cả', color: 'info', count: lengthJobPost },
+    { value: 0, label: 'Đang hoạt động', color: 'success', count: lengthJobPostActive },
+    { value: 2, label: 'Đang đợi duyệt', color: 'success', count: lengthJobPostPending },
+    { value: 4, label: 'Chờ hoạt động', color: 'success', count: lengthJobPostPosting },
+    { value: 3, label: 'Từ chối', color: 'error', count: lengthJobPostCancel },
+    { value: 1, label: 'Đã ẩn', color: 'warning', count: lengthJobPostHidden },
   ];
 
   console.log(dataFiltered.length === 0);
@@ -203,8 +350,10 @@ export default function CompanyJobPost() {
             allowScrollButtonsMobile
             variant="scrollable"
             scrollButtons="auto"
-            value={filterStatus}
-            onChange={onFilterStatus}
+            value={valueTab}
+            onChange={(event, newValue) => {
+              setValueTab(newValue);
+            }}
             sx={{ bgcolor: 'background.neutral' }}
           >
             {TABS.map((tab) => (
@@ -217,6 +366,10 @@ export default function CompanyJobPost() {
                   <Label color={tab.color}> {tab.count}  </Label>
                   {tab.label}
                 </Typography>}
+                onClick={() => {
+                  setFilterName('');
+                  setStatusJobPost(tab.value);
+                }}
               />
             ))}
           </Tabs>
@@ -250,7 +403,8 @@ export default function CompanyJobPost() {
                   <TableHeadCustom
                     order={order}
                     orderBy={orderBy}
-                    headLabel={filterStatus === 2 ? TABLE_HEAD_FOR_APPROVE : TABLE_HEAD}
+                    // eslint-disable-next-line no-nested-ternary
+                    headLabel={statusJobPost === 2 ? TABLE_HEAD_FOR_APPROVE : statusJobPost === 3 ? TABLE_HEAD_FOR_CANCEL : TABLE_HEAD}
                     rowCount={tableData.length}
                     numSelected={selected.length}
                     onSort={onSort}
@@ -269,7 +423,7 @@ export default function CompanyJobPost() {
                         key={row.id}
                         row={row}
                         index={index}
-                        filterStatus={filterStatus}
+                        statusJobPost={statusJobPost}
                         onReject={() => handleRejectJobPostRow(row.id)}
                         onDeleteRow={() => handleJobPostRow(row.id)}
                         onError={() => handleError()}
@@ -306,6 +460,16 @@ export default function CompanyJobPost() {
           </Box>
         </Card>
       </Container>
+      <Snackbar
+        open={openAlert}
+        autoHideDuration={5000}
+        onClose={handleCloseAlert}
+        anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+      >
+        <Alert onClose={handleCloseAlert} severity={severity} sx={{ width: '100%' }} variant="filled">
+          {messageAlert}
+        </Alert>
+      </Snackbar>
 
     </Page>
   );
@@ -313,7 +477,8 @@ export default function CompanyJobPost() {
 
 // ----------------------------------------------------------------------
 
-function applySortFilter({ tableData, comparator, filterName, filterStatus }) {
+function applySortFilter({ tableData, comparator, filterName, valueTab }) {
+  console.log();
   const stabilizedThis = tableData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -324,12 +489,12 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus }) {
 
   tableData = stabilizedThis.map((el) => el[0]);
 
-  if (filterStatus !== 5) {
-    tableData = tableData.filter((item) => item.status === filterStatus);
+  if (valueTab !== 5) {
+    tableData = tableData.filter((item) => item.status === valueTab);
   }
 
   if (filterName) {
-    tableData = tableData.filter((item) => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
+    tableData = tableData.filter((item) => item.title.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
   }
 
   return tableData;

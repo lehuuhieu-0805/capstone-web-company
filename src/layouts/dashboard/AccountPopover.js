@@ -49,8 +49,9 @@ export default function AccountPopover({ company }) {
     setOpen(null);
   };
 
+  const role = localStorage.getItem('role');
+
   useEffect(() => {
-    const role = localStorage.getItem('role');
     if (role === 'COMPANY') {
       MENU_OPTIONS = [
         {
@@ -65,7 +66,7 @@ export default function AccountPopover({ company }) {
         },
       ];
     }
-  }, []);
+  }, [role]);
 
   return (
     <>

@@ -39,6 +39,8 @@ let oldFileUrlImage = [];
 let listSkillFilter = [];
 
 export default function JobPost() {
+  const token = localStorage.getItem('token');
+
   const [openDialog, setOpenDialog] = useState(false);
   const [defaultStartDay, setDefaultStartDay] = useState(dayjs().add(1, 'day'));
   const [defaultEndDay, setDefaultEndDay] = useState(defaultStartDay.add(1, 'day'));
@@ -216,7 +218,7 @@ export default function JobPost() {
     }).catch(error => console.log(error));
 
     axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=5`,
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}?employeeId=${localStorage.getItem('user_id')}&status=4`,
       method: 'get',
       // headers: {
       //   Authorization: `Bearer ${token}`
@@ -447,8 +449,8 @@ export default function JobPost() {
 
   const TABS = [
     { value: 0, label: 'Đang hoạt động', color: 'success', count: lengthJobPostActive },
-    { value: 2, label: 'Đang đợi duyệt', color: 'success', count: lengthJobPostPosting },
-    { value: 4, label: 'Chờ hoạt động', color: 'success', count: lengthJobPostPending },
+    { value: 2, label: 'Đang đợi duyệt', color: 'success', count: lengthJobPostPending },
+    { value: 4, label: 'Chờ hoạt động', color: 'success', count: lengthJobPostPosting },
     { value: 3, label: 'Từ chối', color: 'error', count: lengthJobPostCancel },
     { value: 1, label: 'Đã ẩn', color: 'warning', count: lengthJobPostHidden },
   ];
@@ -497,9 +499,9 @@ export default function JobPost() {
                   axios({
                     url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_JOBPOST}/${idJobPost}`,
                     method: 'put',
-                    // headers: {
-                    //   Authorization: `Bearer ${token}`
-                    // },
+                    headers: {
+                      Authorization: `Bearer ${token}`
+                    },
                     data: jobPost
                   }).then(() => {
                     setRefreshData(!refreshData);
@@ -522,9 +524,9 @@ export default function JobPost() {
                 axios({
                   url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_EXPRIRE_JOBPOST}/${idJobPost}`,
                   method: 'put',
-                  // headers: {
-                  //   Authorization: `Bearer ${token}`
-                  // },
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  },
                   data: {
                     id: idJobPost,
                     end_time: dayjs().format('YYYY-MM-DD')
@@ -555,7 +557,7 @@ export default function JobPost() {
                 });
 
               }
-            }} variant='contained'>Ẩn</LoadingButton>
+            }} variant='contained'>Xác nhận</LoadingButton>
           </DialogActions>
         </Dialog>
 

@@ -64,6 +64,7 @@ const TABLE_HEAD = [
 // ----------------------------------------------------------------------
 
 export default function User() {
+  const token = localStorage.getItem('token');
   const [tableData, setTableData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -132,9 +133,9 @@ export default function User() {
     setMessageAlert('Xoá thành công');
   };
   const NewUserSchema = yup.object().shape({
-    name: yup.string().required('Vui lòng nhập tên công ty'),
+    name: yup.string().required('Vui lòng nhập tên nhân viên'),
     email: yup.string().email('Địa chỉ email không hợp lệ').required('Vui lòng nhập địa chỉ email'),
-    phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").max(10, 'Số điện thoại không hợp lệ'),
+    phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").min(10, 'Số điện thoại không hợp lệ').max(10, 'Số điện thoại không hợp lệ'),
 
   });
 
@@ -170,6 +171,9 @@ export default function User() {
     axios({
       url: `https://stg-api-itjob.unicode.edu.vn/api/v1/employees`,
       method: 'post',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
       data: {
         name: data.name,
         email: data.email,
@@ -179,28 +183,12 @@ export default function User() {
     }).then((response) => {
       console.log(response);
       // setLoadingButtonRegister(false);
-
-      axios({
-        url: `https://stg-api-itjob.unicode.edu.vn/api/v1/emails/mail-create-employee?email=${response.data.data.email}`,
-        method: 'POST',
-        // headers: {
-        //   Authorization: `Bearer ${token}`
-        // },
-      }).then(() => {
-        setSeverity('success');
-        setMessageAlert('Thêm nhân viên thành công');
-        setOpenAlert(true);
-        setRefreshData(true);
-        setLoadingButtonRegister(false);
-        handleCloseDialog();
-      }).catch(error => {
-        console.log(error);
-        setLoadingButtonRegister(false);
-        setSeverity('error');
-        setMessageAlert('Gửi email xác thực không thành công!');
-        setOpenAlert(true);
-        handleCloseDialog();
-      });
+      setSeverity('success');
+      setMessageAlert('Thêm nhân viên thành công');
+      setOpenAlert(true);
+      setRefreshData(true);
+      setLoadingButtonRegister(false);
+      handleCloseDialog();
     }).catch(error => {
       console.log(error);
       setLoadingButtonRegister(false);
@@ -351,7 +339,7 @@ export default function User() {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button variant="contained" color="inherit" onClick={handleCloseDialog}>Huỷ</Button>
+            <Button variant="outlined" onClick={handleCloseDialog}>Huỷ</Button>
             <LoadingButton type="submit" variant="contained" loading={loadingButtonRegister}>
               Thêm
             </LoadingButton>

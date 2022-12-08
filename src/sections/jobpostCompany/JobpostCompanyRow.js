@@ -5,6 +5,7 @@ import axios from 'axios';
 import ModalImage from 'react-modal-image';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import { MoreVert } from '@mui/icons-material';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -32,6 +33,7 @@ import {
   ImageListItem,
   DialogContentText,
   TextField,
+  Menu,
 } from '@mui/material';
 import { useDispatch } from 'react-redux';
 // components
@@ -47,7 +49,9 @@ JobpostComanyTableRow.propTypes = {
   row: PropTypes.object,
 };
 
-export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onReject, index, filterStatus }) {
+export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onReject, index, statusJobPost }) {
+  const token = localStorage.getItem('token');
+
   const theme = useTheme();
   const [skillDetail, setSkillDetail] = useState([]);
   const [employee, setEmployee] = useState('');
@@ -55,6 +59,8 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
   const [openDialogReject, setOpenDialogReject] = useState(false);
   const [reasons, setReason] = useState('');
   const [openDialogDetail, setOpenDialogDetail] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   const dispatch = useDispatch();
 
@@ -71,7 +77,10 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
   const handleCloseDialogDetail = () => {
     setOpenDialogDetail(false);
   };
-  console.log(row);
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
   useEffect(() => {
     row.job_post_skills.map((jobPostSkill) => axios({
       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}/${jobPostSkill.skill_id}`,
@@ -96,13 +105,17 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [row.job_post_skills]);
   dayjs.extend(isSameOrBefore);
+  console.log(dayjs(row.end_time).isSameOrBefore(dayjs()));
   const handleAccept = () => {
     if (dayjs(row.start_time).isSameOrBefore(dayjs())) {
       axios({
         url: `https://stg-api-itjob.unicode.edu.vn/api/v1/job-posts/approval?id=${row.id}`,
         method: 'put',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         data: {
           id: row.id,
           status: 0,
@@ -122,6 +135,9 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
       axios({
         url: `https://stg-api-itjob.unicode.edu.vn/api/v1/job-posts/approval?id=${row.id}`,
         method: 'put',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
         data: {
           id: row.id,
           status: 4,
@@ -145,16 +161,16 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
     axios({
       url: `https://stg-api-itjob.unicode.edu.vn/api/v1/job-posts/approval?id=${row.id}`,
       method: 'put',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
       data: {
         id: row.id,
         reason: reasons,
         status: 3,
-
       }
     }).then((response) => {
       onReject();
-
-
     }).catch(error => {
       onError();
       console.log(error);
@@ -164,13 +180,18 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
   return (
     <TableRow>
       <TableCell align="left">{index + 1}</TableCell>
-      <TableCell align="left">{row.title}</TableCell>
+      <TableCell align="left" style={{ maxWidth: 400, overflow: 'hidden' }}>{row.title}</TableCell>
       <TableCell align="left">{dayjs(row.create_date).format('DD-MM-YYYY HH:mm:ss')}</TableCell>
+      <TableCell align="left">{dayjs(row.start_time).format('DD-MM-YYYY')}</TableCell>
+      <TableCell align="left">{dayjs(row.end_time).format('DD-MM-YYYY')}</TableCell>
 
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
         {employee}
       </TableCell>
-      {filterStatus === 2 ? (
+      {statusJobPost === 3 ? (
+        <TableCell align="left">{row.reason}</TableCell>
+      ) : null}
+      {statusJobPost === 2 ? (
         <TableCell align="left">{row.money}</TableCell>
       ) : null}
       <TableCell align="left">
@@ -238,7 +259,7 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
         })()}
       </TableCell>
 
-      <TableCell align="left">
+      {/* <TableCell align="left">
         <Tooltip title="Xem chi tiết">
           <IconButton
             onClick={() => {
@@ -250,7 +271,8 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
           </IconButton>
         </Tooltip>
         {(() => {
-          if (row.status === 2) {
+          if (statusJobPost === 2 && row.status === 2) {
+            // if (row.status === 2) {
             return (<>
               <Tooltip title="Duyệt">
                 <IconButton
@@ -275,9 +297,46 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
             </>
             );
           }
+          // if (row.status === 2) {
+          //   return (<>
+          //     <Tooltip title="Duyệt">
+          //       <IconButton
+          //         onClick={() => {
+          //           setOpenDialogAccept(true);
+          //         }}
+          //         color="info"
+          //       >
+          //         <Iconify icon={'line-md:circle-twotone-to-confirm-circle-twotone-transition'} color={'lawngreen'} width={20} height={20} />
+          //       </IconButton>
+          //     </Tooltip>
+          //     <Tooltip title="Từ chối">
+          //       <IconButton
+          //         onClick={() => {
+          //           setOpenDialogReject(true);
+          //         }}
+          //         color="info"
+          //       >
+          //         <Iconify icon={'bx:block'} color="#EE4B2B" width={20} height={20} />
+          //       </IconButton>
+          //     </Tooltip>
+          //   </>
+          //   );
+          // }
 
 
         })()}
+      </TableCell> */}
+      <TableCell align="center">
+        <IconButton
+          aria-label="more"
+          id="long-button"
+          aria-haspopup="true"
+          onClick={(e) => {
+            setAnchorEl(e.currentTarget);
+          }}
+        >
+          <MoreVert />
+        </IconButton>
       </TableCell>
       <Dialog
         open={openDialogDetail}
@@ -285,7 +344,7 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
         fullWidth
-        maxWidth="md"
+        maxWidth="xl"
       >
         <DialogTitle id="alert-dialog-title">Thông tin bài tuyển dụng</DialogTitle>
         <DialogContent>
@@ -295,7 +354,7 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
                 <CardContent>
                   <Grid container spacing={2}>
 
-                    <Grid item xs={9}>
+                    <Grid item xs={10}>
                       <h3>{row.title}</h3>
                       <h4 style={{ fontWeight: 'normal' }}>
                         {dayjs(row.create_date).format('DD-MM-YYYY HH:mm:ss')}
@@ -347,6 +406,14 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
                           Vị trí công việc:{' '}
                         </Box>
                         {row.job_position.name}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row">
+                      <Typography variant="h7" component="div">
+                        <Box display="inline" fontWeight="fontWeightBold">
+                          Số tiền:{' '}
+                        </Box>
+                        {row.money}
                       </Typography>
                     </Stack>
                   </Stack>
@@ -485,6 +552,66 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Menu
+        open={open}
+        onClose={handleCloseMenu}
+        anchorEl={anchorEl}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={() => {
+          setOpenDialogDetail(true);
+          setAnchorEl(null);
+        }} sx={{ color: 'green' }}>
+          <Iconify icon='akar-icons:info' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
+          Xem thông tin
+        </MenuItem>
+        {statusJobPost === 2 ? (
+          <>
+            <MenuItem onClick={() => {
+              setOpenDialogAccept(true);
+              setAnchorEl(null);
+            }} sx={{ color: 'blue' }}>
+              <Iconify icon='mdi:approve' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
+              Duyệt
+            </MenuItem>
+            <MenuItem onClick={() => {
+              setOpenDialogReject(true);
+              setAnchorEl(null);
+            }} sx={{ color: 'red' }}>
+              <Iconify icon='material-symbols:cancel' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
+              Từ chối
+            </MenuItem>
+          </>
+        ) : null}
+      </Menu>
     </TableRow>
   );
 }
