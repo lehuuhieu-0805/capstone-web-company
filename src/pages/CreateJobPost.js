@@ -376,13 +376,13 @@ export default function CreateJobPost() {
     }
   };
 
-  const handleChangeSkill = (event, index) => {
+  const handleChangeSkill = (event, value, index) => {
     setDisabledField(true);
 
     setSkill((prev) => ([
       ...prev, {
         index,
-        id: event.target.value,
+        id: value.id,
       }
     ]));
 
@@ -392,7 +392,7 @@ export default function CreateJobPost() {
     }));
 
     axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}/${event.target.value}`,
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}/${value.id}`,
       method: 'get',
       // headers: {
       //   Authorization: `Bearer ${token}`
@@ -409,7 +409,7 @@ export default function CreateJobPost() {
           skillLevel.splice(index, 1);
         }
         if (listSkillLevel[index]) {
-          listSkillLevel[index].skillId = event.target.value;
+          listSkillLevel[index].skillId = value.id;
           listSkillLevel[index].skillLevel = response.data.data;
 
         } else {
@@ -417,7 +417,7 @@ export default function CreateJobPost() {
             ...prev,
             {
               index,
-              skillId: event.target.value,
+              skillId: value.id,
               skillLevel: response.data.data
             }
           ]));
@@ -428,23 +428,24 @@ export default function CreateJobPost() {
     }).catch(error => console.log(error));
   };
 
-  const handleChangeSkillLevel = (event, obj, index) => {
+  const handleChangeSkillLevel = (event, value, index) => {
+    console.log(value);
     setHasError((preState) => ({
       ...preState,
       skillLevel: false
     }));
 
     if (skillLevel[index]) {
-      skillLevel[index].id = event.target.value;
-      skillLevel[index].name = obj.props.children;
+      skillLevel[index].id = value.id;
+      skillLevel[index].name = value.label;
 
       setSkillLevel(skillLevel);
     } else {
       setSkillLevel((prev) => ([
         ...prev, {
           index,
-          id: event.target.value,
-          name: obj.props.children
+          id: value.id,
+          name: value.label
         }
       ]));
     }
@@ -453,7 +454,7 @@ export default function CreateJobPost() {
       if (skill[i].index === index) {
         setMapSkillAndSkillLevel(new Map(mapSkillAndSkillLevel.set(index, {
           skill_id: skill[i].id,
-          skill_level: obj.props.children
+          skill_level: value.label
         })));
       }
     };
@@ -480,7 +481,6 @@ export default function CreateJobPost() {
   const onSubmit = (data) => {
     setLoadingButton(true);
     console.log(oldFileUrlImage);
-
     if (title.key === 0) {
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_JOBPOST}`,
@@ -495,7 +495,7 @@ export default function CreateJobPost() {
           money_for_job_post: money.replaceAll('.', ''),
           company_id: localStorage.getItem('company_id'),
           employee_id: localStorage.getItem('user_id'),
-          job_position_id: jobPosition,
+          job_position_id: jobPosition.id,
           working_style_id: workingStyle,
           working_place: workingPlace,
           start_time: startDay.format('YYYY-MM-DD'),
@@ -595,7 +595,7 @@ export default function CreateJobPost() {
           status,
           company_id: localStorage.getItem('company_id'),
           employee_id: localStorage.getItem('user_id'),
-          job_position_id: jobPosition,
+          job_position_id: jobPosition.id,
           working_style_id: workingStyle,
           working_place: workingPlace,
           start_time: startDay.format('YYYY-MM-DD'),
@@ -905,19 +905,18 @@ export default function CreateJobPost() {
                     </Grid>
                     <Grid item xs={6}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Vị trí công việc</InputLabel>
-                        <Select
-                          name='jobPosition'
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
+                        <Autocomplete
                           value={jobPosition}
-                          label="Vị trí công việc"
-                          onChange={handleChangeJobPosition}
-                        >
-                          {listJobPosition.map((el) => (
-                            <MenuItem key={el.id} value={el.id}>{el.name}</MenuItem>
-                          ))}
-                        </Select>
+                          options={listJobPosition.map((el) => ({ id: el.id, label: el.name }))}
+                          onChange={(event, newValue) => {
+                            setHasError((preState) => ({
+                              ...preState,
+                              jobPosition: false
+                            }));
+                            setJobPosition(newValue);
+                          }}
+                          renderInput={(params) => <TextField {...params} label="Vị trí công việc" />}
+                        />
                         {hasError.jobPosition && <p style={{ color: 'red' }}>*Vui lòng chọn vị trí công việc</p>}
                       </FormControl>
                     </Grid>
@@ -970,7 +969,7 @@ export default function CreateJobPost() {
                   <Grid container spacing={2} columns={24} style={{ padding: 5 }} key={item.id}>
                     <Grid item xs={11} >
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Kĩ năng</InputLabel>
+                        {/* <InputLabel id="demo-simple-select-label">Kĩ năng</InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
                           value={listSkillLevel[index]?.skillId}
@@ -981,13 +980,21 @@ export default function CreateJobPost() {
                           {item.skill.map((el) => (
                             <MenuItem key={el.id} value={el.id} >{el.name}</MenuItem>
                           ))}
-                        </Select>
+                        </Select> */}
+
+                        <Autocomplete
+                          value={listSkillLevel[index]?.skillId}
+                          options={item.skill.map((el) => ({ id: el.id, label: el.name }))}
+                          onChange={(e, value) => handleChangeSkill(e, value, index)}
+                          renderInput={(params) => <TextField {...params} label="Kĩ năng" />}
+                        />
+
                         {hasError.skill && <p style={{ color: 'red' }}>*Vui lòng chọn kĩ năng</p>}
                       </FormControl>
                     </Grid>
                     <Grid item xs={11}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Trình độ</InputLabel>
+                        {/* <InputLabel id="demo-simple-select-label">Trình độ</InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
                           value={skillLevel[index]?.id}
@@ -998,7 +1005,16 @@ export default function CreateJobPost() {
                           {listSkillLevel[index]?.skillLevel.map((el) =>
                             (<MenuItem key={el.id} value={el.id} >{el.name}</MenuItem>)
                           )}
-                        </Select>
+                        </Select> */}
+
+                        <Autocomplete
+                          value={skillLevel[index]?.id}
+                          options={listSkillLevel[index]?.skillLevel.map((el) => ({ id: el.id, label: el.name }))}
+                          onChange={(e, value) => handleChangeSkillLevel(e, value, index)}
+                          disabled={skillLevel[index]?.id ? false : disabledField}
+                          renderInput={(params) => <TextField {...params} label="Trình độ" />}
+                        />
+
                         {hasError.skillLevel && <p style={{ color: 'red' }}>*Vui lòng chọn trình độ</p>}
                       </FormControl>
                     </Grid>

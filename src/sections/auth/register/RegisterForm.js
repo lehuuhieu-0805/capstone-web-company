@@ -561,7 +561,7 @@ export default function RegisterForm() {
                 //   setLoadingButtonConfirm(false);
                 //   navigate('/login', { replace: true });
                 // }, 3000);
-                navigate('/login?status=verified');
+                navigate('/show-information');
                 // axios({
                 //   url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_SEND_MAIL_TO_ADMIN}?email=${getValues('email')}`,
                 //   method: 'post',
