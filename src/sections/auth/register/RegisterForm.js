@@ -59,7 +59,7 @@ export default function RegisterForm() {
     phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").min(10, 'Số điện thoại không hợp lệ').max(10, 'Số điện thoại không hợp lệ'),
     website: yup.string().required('Vui lòng nhập địa chỉ website'),
     description: yup.string().required('Vui lòng nhập mô tả công ty'),
-    taxCode: yup.string().required('Vui lòng nhập mã số thuế').matches(/^[0-9]+$/, "Mã số thuế không hợp lệ").min(10, 'Mã số thuế không hợp lệ').max(14, 'Mã số thuế không hợp lệ'),
+    taxCode: yup.string().required('Vui lòng nhập mã số thuế').matches(/^[0-9]+$/, "Mã số thuế không hợp lệ").min(10, 'Mã số thuế không hợp lệ').max(13, 'Mã số thuế không hợp lệ'),
     password: yup.string().required('Vui lòng nhập mật khẩu').min(8, 'Mật khẩu tối thiểu 8 kí tự'),
     confirmPassword: yup.string().required('Vui lòng nhập lại mật khẩu').oneOf([yup.ref('password'), null], 'Mật khẩu không khớp'),
     image: yup.mixed().test('required', 'Logo bắt buộc', (value) => value !== ''),
