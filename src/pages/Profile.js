@@ -21,7 +21,8 @@ const schema = yup.object({
   website: yup.string().nullable().required('*Vui lòng nhập địa chỉ website'),
   email: yup.string().nullable().email('*Email không đúng định dạng').required('*Vui lòng nhập địa chỉ email'),
   phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").min(10, 'Số điện thoại không hợp lệ').max(10, 'Số điện thoại không hợp lệ'),
-  description: yup.string().nullable().required('*Vui lòng nhập mô tả')
+  description: yup.string().nullable().required('*Vui lòng nhập mô tả'),
+  taxCode: yup.string().nullable().required('*Vui lòng nhập mã số thuế').min(10, 'Mã số thuế không hợp lệ').max(14, 'Mã số thuế không hợp lệ'),
 });
 
 export default function Profile() {
@@ -53,6 +54,7 @@ export default function Profile() {
       description: '',
       premium: '',
       id: '',
+      taxCode: ''
     }
   });
 
@@ -70,6 +72,7 @@ export default function Profile() {
         setValue('description', response.data.data.description);
         setValue('is_premium', response.data.data.premium);
         setValue('id', response.data.data.id);
+        setValue('taxCode', response.data.data.tax_code);
         setCompanyType(response.data.data.company_type);
         setStatusCompany(response.data.data.status);
         setImageUrl(response.data.data.logo);
@@ -241,9 +244,13 @@ export default function Profile() {
                             </Select>
                           </FormControl>
                         </Grid>
-                        <Grid item xs={12}>
-                          <TextField fullWidth disabled={disabled} {...register('email')} label='Email' />
+                        <Grid item xs={8}>
+                          <TextField fullWidth disabled {...register('email')} label='Email' />
                           <p style={{ color: 'red' }}>{errors.email?.message}</p>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <TextField fullWidth disabled {...register('taxCode')} label='Mã số thuế' />
+                          <p style={{ color: 'red' }}>{errors.taxCode?.message}</p>
                         </Grid>
 
                         <Grid item xs={12}>

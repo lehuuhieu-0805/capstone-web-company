@@ -276,7 +276,7 @@ export default function DetailJobPost() {
                   />
                   <Tab label='Ứng viên' id='simple-tab-1' aria-controls='simple-tabpanel-1' />
                   <Tab label='Quan tâm' id='simple-tab-2' aria-controls='simple-tabpanel-2' />
-                  <Tab label='Matching' id='simple-tab-3' aria-controls='simple-tabpanel-3' />
+                  <Tab label='Kết nối' id='simple-tab-3' aria-controls='simple-tabpanel-3' />
                 </Tabs>
 
                 {/* status = 0 => get all profile applicant sort by system
