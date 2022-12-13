@@ -18,6 +18,7 @@ export default function Deposit() {
     message: '',
     error: false
   });
+  const [exchangeMoney, setExchangeMoney] = useState('');
   const [severity, setSeverity] = useState('success');
   const [alertMessage, setAlertMessage] = useState('');
   const [openAlert, setOpenAlert] = useState(false);
@@ -25,15 +26,18 @@ export default function Deposit() {
 
   useEffect(() => {
     const queryParams = getQueryParams();
+    console.log(queryParams);
     if (queryParams?.amount && queryParams?.status) {
+      console.log(1);
       if (queryParams.status === 'failed') {
         setSeverity('error');
         setAlertMessage('Nạp tiền thất bại');
         setOpenAlert(true);
       } else if (queryParams.status === 'success') {
         setSeverity('success');
-        setAlertMessage(`Bạn đã nạp ${queryParams.amount} vào tài khoản thành công`);
+        setAlertMessage(`Bạn đã nạp ${queryParams.amount / 100} Tagent coin vào tài khoản thành công`);
         setOpenAlert(true);
+        console.log(2);
       }
     }
   }, []);
@@ -94,6 +98,7 @@ export default function Deposit() {
                   error: true
                 });
               } else {
+                setExchangeMoney(format1 / 100);
                 setError({
                   message: '',
                   error: false
@@ -103,6 +108,7 @@ export default function Deposit() {
               setMoney(format2);
             }} label='Số tiền cần nạp' fullWidth sx={{ mb: 2 }} />
             {error.error && <p style={{ color: 'red' }}>{error.message}</p>}
+            {exchangeMoney !== '' && <p style={{ color: 'red' }}> = {exchangeMoney} Tagent coin</p>}
             <FormControlLabel value='end' control={<Radio checked />} label={
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <img src='https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2FLogo-VNPay.png?alt=media&token=fd61a9dc-f27f-41db-99d9-7d45036289a0' alt="logo" width='50' />

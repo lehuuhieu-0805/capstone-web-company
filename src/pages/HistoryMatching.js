@@ -1,8 +1,9 @@
-import { CircularProgress, Container, Paper, Stack, Table, TableCell, TableContainer, TablePagination, TableRow } from "@mui/material";
+import { Button, Card, CardContent, CardHeader, Chip, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid, ImageList, Paper, Stack, Table, TableCell, TableContainer, TablePagination, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
 import dayjs from 'dayjs';
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
 import HeaderBreadcrumbs from "../components/HeaderBreadcrumbs";
 import Page from "../components/Page";
@@ -114,6 +115,8 @@ export default function HistoryMatching() {
     comparator: getComparator(order, orderBy),
   });
   const dataFiltered = dataFilter.map((user, i) => ({ 'no': i + 1, ...user }));
+
+  console.log(dataFiltered);
   return (
     <Page title='Lịch sử kết nối'>
       <Container maxWidth='xl'>
@@ -143,7 +146,9 @@ export default function HistoryMatching() {
                 {dataFiltered.length > 0 ? dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
                   <TableRow key={item.no} hover>
                     <TableCell>{item.no}</TableCell>
-                    <TableCell>{item.title}</TableCell>
+                    <TableCell onClick={() => {
+
+                    }}>{item.title}</TableCell>
                     <TableCell>{item.name}</TableCell>
                     <TableCell>{dayjs(item.match_date).format('DD-MM-YYYY HH:mm:ss')}</TableCell>
                   </TableRow>
@@ -157,8 +162,8 @@ export default function HistoryMatching() {
               </Table>
             </TableContainer>
             <TablePagination
-            labelRowsPerPage={'Số hàng mỗi trang'}
-            labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
+              labelRowsPerPage={'Số hàng mỗi trang'}
+              labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
               count={dataFiltered.length}
@@ -169,6 +174,155 @@ export default function HistoryMatching() {
             />
           </>
         )}
+
+        {/* <Dialog
+          open={openDialogJobPostDetail}
+          onClose={() => { }}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          fullWidth
+          maxWidth="xl"
+        >
+          <DialogTitle id="alert-dialog-title">Thông tin bài tuyển dụng</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Card>
+                  <CardContent>
+                    <Grid container spacing={2}>
+
+                      <Grid item xs={10}>
+                        <h3>{row.title}</h3>
+                        <h4 style={{ fontWeight: 'normal' }}>
+                          {dayjs(row.create_date).format('DD-MM-YYYY HH:mm:ss')}
+                        </h4>
+                      </Grid>
+                      <Grid item xs={2} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Chip label=" Chờ duyệt" color="warning" />
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Stack spacing={3}>
+                  <Card>
+                    <CardHeader title="Thông tin" />
+                    <Stack spacing={2} sx={{ p: 3 }}>
+                      <Stack direction="row">
+                        <Typography variant="h7" component="div">
+                          <Box display="inline" fontWeight="fontWeightBold">
+                            Số lượng tuyển:{' '}
+                          </Box>
+                          {row.quantity}
+                        </Typography>
+
+                      </Stack>
+                      <Stack direction="row">
+                        <Typography variant="h7" component="div">
+                          <Box display="inline" fontWeight="fontWeightBold">
+                            Hình thức làm việc:{' '}
+                          </Box>
+                          {row.working_style.name}
+                        </Typography>
+                      </Stack>
+
+                      <Stack direction="row">
+                        <Typography variant="h7" component="div">
+                          <Box display="inline" fontWeight="fontWeightBold">
+                            Địa điểm làm việc:{' '}
+                          </Box>
+                          {row.working_place}
+                        </Typography>
+                      </Stack>
+
+                      <Stack direction="row">
+                        <Typography variant="h7" component="div">
+                          <Box display="inline" fontWeight="fontWeightBold">
+                            Vị trí công việc:{' '}
+                          </Box>
+                          {row.job_position.name}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row">
+                        <Typography variant="h7" component="div">
+                          <Box display="inline" fontWeight="fontWeightBold">
+                            Số tiền:{' '}
+                          </Box>
+                          {row.money}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  </Card>
+                  <Typography variant="subtitle1">Hình ảnh</Typography>
+                  <Stack direction="row">
+
+                    <ImageList variant="quilted" cols={2} gap={8}>
+                      {row.album_images &&
+                        row.album_images.map((item) => (
+                          <ImageListItem key={item.id}>
+                            {item.url_image &&
+
+
+                              <ModalImage small={`${item.url_image}?w=164&h=164&fit=crop&auto=format`} medium={item.url_image} />
+
+                            }
+                          </ImageListItem>
+                        ))}
+                    </ImageList>
+
+                  </Stack>
+                </Stack>
+              </Grid>
+
+              <Grid item xs={12} md={8}>
+                <Stack spacing={3}>
+                  <Card>
+                    <CardHeader title="Giới thiệu" />
+
+                    <Stack spacing={2} sx={{ p: 3 }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                          <h4>Mô tả:</h4>
+                          <h4 style={{ fontWeight: 'normal' }} dangerouslySetInnerHTML={{ __html: row.description }} />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <h4>Bắt đầu:</h4>
+                          <h4 style={{ fontWeight: 'normal' }}>
+                            {dayjs(row.start_time).format('DD-MM-YYYY')}
+                          </h4>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <h4>Kết thúc:</h4>
+                          <h4 style={{ fontWeight: 'normal' }}>{dayjs(row.end_time).format('DD-MM-YYYY')}</h4>
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                  </Card>
+                  <Card>
+                    <CardHeader title="Kỹ năng yêu cầu" />
+
+                    <Stack spacing={2} sx={{ p: 3 }}>
+                      {skillDetail &&
+                        skillDetail.map((element) => (
+                          <Stack key={element.id} spacing={15} direction="row">
+                            <Typography variant="body2">-Ngôn ngữ: {element.skill}</Typography>
+                            <Typography variant="body2">Trình độ : {element.skillLevel}</Typography>
+                          </Stack>
+                        ))}
+                    </Stack>
+                  </Card>
+                </Stack>
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialogDetail} variant="contained">
+              Đóng
+            </Button>
+          </DialogActions>
+        </Dialog> */}
+
       </Container>
     </Page>
   );

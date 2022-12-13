@@ -418,7 +418,7 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
                     </Stack>
                   </Stack>
                 </Card>
-                <Typography variant="caption">Hình ảnh</Typography>
+                <Typography variant="subtitle1">Hình ảnh</Typography>
                 <Stack direction="row">
 
                   <ImageList variant="quilted" cols={2} gap={8}>

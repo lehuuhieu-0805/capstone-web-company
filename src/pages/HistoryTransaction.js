@@ -47,7 +47,7 @@ export default function HistoryTransaction() {
     order,
     orderBy,
     rowsPerPage,
-
+    setPage,
     //
     selected,
 
@@ -160,7 +160,9 @@ export default function HistoryTransaction() {
     { value: 5, label: 'Hoàn tiền' },
   ];
 
-
+  useEffect(() => {
+    setPage(0);
+  }, [filterStatus]);
 
 
   const dataFiltered = applySortFilter({
@@ -175,7 +177,7 @@ export default function HistoryTransaction() {
   const isNotFound =
     (!dataFiltered.length && !!filterStatus) ||
     (!dataFiltered.length && !!filterEndDate) ||
-    (!dataFiltered.length && !!filterStartDate) || tableData === undefined || dataFiltered === [];
+    (!dataFiltered.length && !!filterStartDate) || tableData === undefined || dataFiltered.length === 0;
 
   return (
     <Page title="Giao dịch">
@@ -312,7 +314,7 @@ function applySortFilter({ tableData, comparator, filterStatus }) {
   if (filterStatus === 5) {
     tableData = tableData.filter((item) => item.type_of_transaction === 'Return money');
   }
-  if (filterStatus === 6) {
+  if (filterStatus === 2) {
     tableData = tableData.filter((item) => item.type_of_transaction === 'Create job post');
   }
 

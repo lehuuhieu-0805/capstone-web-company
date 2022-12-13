@@ -150,8 +150,11 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
         <AccountStyle>
           <Avatar src={company?.logo} alt="photoURL" />
           <Box sx={{ ml: 2 }}>
-            <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+            <Typography variant="subtitle1" sx={{ color: 'text.primary' }}>
               {company?.name}
+            </Typography>
+            <Typography variant="subtitle2" sx={{ color: 'green' }}>
+              {company?.is_premium ? 'Premium' : ''}
             </Typography>
           </Box>
         </AccountStyle>
@@ -193,36 +196,37 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
 
       <Box sx={{ flexGrow: 1 }} />
 
+      {(() => {
+        if (localStorage.getItem('role') === 'COMPANY') {
+          if (company?.is_premium) {
+            return null;
+          }
+          return (
+            <Box sx={{ px: 1.5, pb: 3, mt: 10 }}>
+              <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
+                <Box
+                  component="img"
+                  src="https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2Ffind-applicant.png?alt=media&token=5701d0af-94b1-4aaa-8ef3-48d718d6144a"
+                  sx={{ width: 100, position: 'absolute', top: -50 }}
+                />
 
-      {localStorage.getItem('role') === 'COMPANY' ? (
-        <Box sx={{ px: 1.5, pb: 3, mt: 10 }}>
-          <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-            <Box
-              component="img"
-              src="https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2Ffind-applicant.png?alt=media&token=5701d0af-94b1-4aaa-8ef3-48d718d6144a"
-              sx={{ width: 100, position: 'absolute', top: -50 }}
-            />
-
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography gutterBottom variant="h6">
-                Bạn muốn tìm kiếm ứng viên?
-              </Typography>
-              {/* <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                Giá chỉ 5000
-              </Typography> */}
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography gutterBottom variant="h6">
+                    Bạn muốn tìm kiếm ứng viên?
+                  </Typography>
+                  {/* <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                      Giá chỉ 5000
+                    </Typography> */}
+                </Box>
+                <Button variant="contained" disabled={!localStorage.getItem('company_id')} onClick={() => setOpenDialog(true)}>
+                  Nâng cấp premium
+                </Button>
+              </Stack>
             </Box>
-            {isPremium ? (
-              <Button variant="contained" disabled onClick={() => setOpenDialog(true)}>
-                Bạn đã nâng cấp premium
-              </Button>
-            ) : (
-              <Button variant="contained" disabled={!localStorage.getItem('company_id')} onClick={() => setOpenDialog(true)}>
-                Nâng cấp premium
-              </Button>
-            )}
-          </Stack>
-        </Box>
-      ) : null}
+          );
+
+        }
+      })()}
 
 
       <Dialog

@@ -54,15 +54,15 @@ export default function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const registerSchema = yup.object().shape({
-    name: yup.string().required('Vui lòng nhập tên công ty'),
-    email: yup.string().email('Địa chỉ email không hợp lệ').required('Vui lòng nhập địa chỉ email'),
-    phone: yup.string().required('Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "Số điện thoại không hợp lệ").min(10, 'Số điện thoại không hợp lệ').max(10, 'Số điện thoại không hợp lệ'),
-    website: yup.string().required('Vui lòng nhập địa chỉ website'),
-    description: yup.string().required('Vui lòng nhập mô tả công ty'),
-    taxCode: yup.string().required('Vui lòng nhập mã số thuế').matches(/^[0-9]+$/, "Mã số thuế không hợp lệ").min(10, 'Mã số thuế không hợp lệ').max(13, 'Mã số thuế không hợp lệ'),
-    password: yup.string().required('Vui lòng nhập mật khẩu').min(8, 'Mật khẩu tối thiểu 8 kí tự'),
-    confirmPassword: yup.string().required('Vui lòng nhập lại mật khẩu').oneOf([yup.ref('password'), null], 'Mật khẩu không khớp'),
-    image: yup.mixed().test('required', 'Logo bắt buộc', (value) => value !== ''),
+    name: yup.string().required('*Vui lòng nhập tên công ty'),
+    email: yup.string().email('*Địa chỉ email không hợp lệ').required('*Vui lòng nhập địa chỉ email'),
+    phone: yup.string().required('*Vui lòng nhập số điện thoại').matches(/^[0-9]+$/, "*Số điện thoại không hợp lệ").min(10, '*Số điện thoại không hợp lệ').max(10, '*Số điện thoại không hợp lệ'),
+    website: yup.string().required('*Vui lòng nhập địa chỉ website'),
+    description: yup.string().required('*Vui lòng nhập mô tả công ty').test('len', '*Mô tả công ty phải nhỏ hơn 1000 kí tự', val => val.toString().length <= 1000),
+    taxCode: yup.string().required('*Vui lòng nhập mã số thuế').min(10, 'Mã số thuế không hợp lệ').max(13, 'Mã số thuế không hợp lệ'),
+    password: yup.string().required('*Vui lòng nhập mật khẩu').min(8, 'Mật khẩu tối thiểu 8 kí tự'),
+    confirmPassword: yup.string().required('*Vui lòng nhập lại mật khẩu').oneOf([yup.ref('password'), null], '*Mật khẩu không khớp'),
+    image: yup.mixed().test('required', '*Logo bắt buộc', (value) => value !== ''),
   });
 
   const defaultValues = {
@@ -80,6 +80,7 @@ export default function RegisterForm() {
   const methods = useForm({
     resolver: yupResolver(registerSchema),
     defaultValues,
+    mode: 'onChange'
   });
 
   const {
@@ -154,10 +155,17 @@ export default function RegisterForm() {
       });
     }).catch(error => {
       console.log(error);
-      setLoadingButtonRegister(false);
-      setSeverity('error');
-      setMessageAlert('Đăng kí tài khoản không thành công');
-      setOpenAlert(true);
+      if (error?.response?.data?.detail.trim() === 'Email has exist!!!') {
+        setLoadingButtonRegister(false);
+        setSeverity('error');
+        setMessageAlert('Email đã tồn tại trong hệ thống');
+        setOpenAlert(true);
+      } else {
+        setLoadingButtonRegister(false);
+        setSeverity('error');
+        setMessageAlert('Đăng kí tài khoản không thành công');
+        setOpenAlert(true);
+      }
     });
   };
 
@@ -373,7 +381,7 @@ export default function RegisterForm() {
             <RHFTextField label='Số điện thoại' name="phone" />
           </Grid>
           <Grid item xs={12}>
-            <RHFTextField multiline label='Giới thiệu công ty' name="description" />
+            <RHFTextField multiline label='Giới thiệu công ty (Tối đa 1000 kí tự)' name="description" />
           </Grid>
           <Grid item xs={12}>
             <RHFTextField label='Website' name="website" />
@@ -397,7 +405,7 @@ export default function RegisterForm() {
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <RHFTextField label='Mã số thuế' name="taxCode" type="number" />
+            <RHFTextField label='Mã số thuế' name="taxCode" />
           </Grid>
           <Grid item xs={6}>
             <RHFTextField

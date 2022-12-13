@@ -191,11 +191,17 @@ export default function User() {
       handleCloseDialog();
     }).catch(error => {
       console.log(error);
-      setLoadingButtonRegister(false);
-      setSeverity('error');
-      setMessageAlert('Thêm nhân viên không thành công');
-      setOpenAlert(true);
-      handleCloseDialog();
+      if (error?.response?.data?.detail.trim() === 'Email already exists!!!') {
+        setLoadingButtonRegister(false);
+        setSeverity('error');
+        setMessageAlert('Địa chỉ email đã tồn tại trong hệ thống');
+        setOpenAlert(true);
+      } else {
+        setLoadingButtonRegister(false);
+        setSeverity('error');
+        setMessageAlert('Thêm nhân viên không thành công');
+        setOpenAlert(true);
+      }
     });
   };
 
@@ -316,25 +322,13 @@ export default function User() {
 
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="subtitle2" noWrap>
-                  Tên nhân viên
-                </Typography>
-                <RHFTextField name="name" />
-
+                <RHFTextField name="name" label='Tên nhân viên' />
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="subtitle2" noWrap>
-                  Email
-                </Typography>
-                <RHFTextField name="email" />
-
+                <RHFTextField name="email" label='Email' />
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="subtitle2" noWrap>
-                  Số điện thoại
-                </Typography>
-                <RHFTextField name="phone" />
-
+                <RHFTextField name="phone" label='Số điện thoại' />
               </Grid>
             </Grid>
           </DialogContent>

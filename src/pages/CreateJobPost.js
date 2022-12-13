@@ -152,30 +152,6 @@ export default function CreateJobPost() {
   }, 1000), []);
 
   useEffect(() => {
-    axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOSITION}`,
-      method: 'get',
-      // headers: {
-      //   'Authorization': `Bearer ${token}`
-      // },
-    }).then((response) => {
-      setListJobPosition(response.data.data);
-    }).catch(error => console.log(error));
-  }, []);
-
-  useEffect(() => {
-    axios({
-      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_WORKINGSTYLE}`,
-      method: 'get',
-      // headers: {
-      //   'Authorization': `Bearer ${token}`
-      // },
-    }).then((response) => {
-      setListWorkingStyle(response.data.data);
-    }).catch(error => console.log(error));
-  }, []);
-
-  useEffect(() => {
     if (!id) {
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}`,
@@ -201,10 +177,32 @@ export default function CreateJobPost() {
     }).then((response) => {
       setListWorkingPlace(response.data);
     }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_WORKINGSTYLE}`,
+      method: 'get',
+      // headers: {
+      //   'Authorization': `Bearer ${token}`
+      // },
+    }).then((response) => {
+      setListWorkingStyle(response.data.data);
+    }).catch(error => console.log(error));
+
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOSITION}`,
+      method: 'get',
+      // headers: {
+      //   'Authorization': `Bearer ${token}`
+      // },
+    }).then((response) => {
+      setListJobPosition(response.data.data);
+    }).catch(error => console.log(error));
   }, []);
 
   useEffect(() => {
     if (id) {
+      setLoadingData(true);
+
       setListSkillLevel([]);
       setSkillLevel([]);
       fileUrlImage = [];
@@ -214,140 +212,175 @@ export default function CreateJobPost() {
           value: 'Chỉnh sửa bài viết tuyển dụng'
         });
       }
-      setLoadingData(true);
 
       axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}/${id}`,
+        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOSITION}`,
         method: 'get',
         // headers: {
         //   'Authorization': `Bearer ${token}`
-        // }
+        // },
       }).then((response) => {
-        const blocksFromHTML = convertFromHTML(response.data.data.description);
-        const content = ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap);
-        setEditorState(EditorState.createWithContent(content));
-        setDescription(response.data.data.description);
-        setValue('id', response.data.data.id);
-        setValue('title', response.data.data.title);
-        setValue('create_date', response.data.data.create_date);
-        setValue('quantity', response.data.data.quantity);
-        setValue('description', response.data.data.description);
-        const money = new Intl.NumberFormat().format(response.data.data.money);
-        setMoney(money.replaceAll(',', '.'));
-        setStatus(response.data.data.status === 3 ? 2 : response.data.data.status);
-        setJobPosition(response.data.data.job_position_id);
-        setWorkingStyle(response.data.data.working_style_id);
-        setWorkingPlace(response.data.data.working_place);
-        if (pathname.includes('/employee/job-post/edit')) {
-          setStartDay(dayjs(response.data.data.start_time));
-          setEndDay(dayjs(response.data.data.end_time));
-          setDisabledStartDay(!dayjs().isSameOrBefore(dayjs(response.data.data.start_time), 'day', 'month', 'year'));
-          setDisabledEndDay(!dayjs().isSameOrBefore(dayjs(response.data.data.end_time), 'day', 'month', 'year'));
-        } else {
-          setStartDay(dayjs());
-          setEndDay(dayjs().add(1, 'day'));
-          setDisabledStartDay(!dayjs().isSameOrBefore(dayjs(startDay), 'day', 'month', 'year'));
-          setDisabledEndDay(!dayjs().isSameOrBefore(dayjs(endDay), 'day', 'month', 'year'));
-        }
-
+        const listJobPositionTemp = response.data.data;
+        setListJobPosition(response.data.data);
         axios({
-          url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOSTSKILL}?jobPostId=${id}`,
+          url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_WORKINGSTYLE}`,
           method: 'get',
           // headers: {
           //   'Authorization': `Bearer ${token}`
-          // }
+          // },
         }).then((response) => {
-          const listJobPostSkill = response.data.data;
-          listJobPostSkill.forEach((element, index) => {
-            setSkill((prev) => ([
-              ...prev, {
-                index,
-                id: element.skill_id,
-              }
-            ]));
-            setMapSkillAndSkillLevel(new Map(mapSkillAndSkillLevel.set(index, {
-              job_post_skill_id: element.id,
-              skill_id: element.skill_id,
-              skill_level: element.skill_level
-            })));
-            axios({
-              url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}/${element.skill_id}`,
-              method: 'get',
-              // headers: {
-              //   Authorization: `Bearer ${token}`
-              // }
-            }).then((response) => {
-              axios({
-                url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILLLEVEL}?skillGroupId=${response.data.data.skill_group_id}`,
-                method: 'get',
-                // headers: {
-                //   'Authorization': `Bearer ${token}`
-                // }
-              }).then((response) => {
-                setListSkillLevel((prev) => ([
-                  ...prev,
-                  {
-                    index,
-                    skillId: element.skill_id,
-                    skillLevel: response.data.data,
-                  }
-                ]));
-              }).catch(error => console.log(error));
-
-              axios({
-                url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILLLEVEL}?skillGroupId=${response.data.data.skill_group_id}&name=${element.skill_level}`,
-                method: 'get',
-                // headers: {
-                //   'Authorization': `Bearer ${token}`
-                // }
-              }).then((response) => {
-                setSkillLevel((prev) => ([
-                  ...prev, {
-                    index,
-                    id: response.data.data[0].id,
-                    name: response.data.data[0].name
-                  }
-                ]));
-
-              }).catch(error => console.log(error));
-            }).catch(error => console.log(error));
-          });
-
-          setOldMapSkillAndSkillLevel(mapSkillAndSkillLevel);
-
+          setListWorkingStyle(response.data.data);
           axios({
-            url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}`,
+            url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}/${id}`,
             method: 'get',
             // headers: {
             //   'Authorization': `Bearer ${token}`
-            // },
+            // }
           }).then((response) => {
-            const listSkill = response.data.data;
-            for (let index = 0; index < listJobPostSkill.length; index += 1) {
-              append({ skill: listSkill });
-              setDisabledField(false);
+            const blocksFromHTML = convertFromHTML(response.data.data.description);
+            const content = ContentState.createFromBlockArray(blocksFromHTML.contentBlocks, blocksFromHTML.entityMap);
+            setEditorState(EditorState.createWithContent(content));
+            setDescription(response.data.data.description);
+            setValue('id', response.data.data.id);
+            setValue('title', response.data.data.title);
+            setValue('create_date', response.data.data.create_date);
+            setValue('quantity', response.data.data.quantity);
+            setValue('description', response.data.data.description);
+            const money = new Intl.NumberFormat().format(response.data.data.money);
+            setMoney(money.replaceAll(',', '.'));
+            setStatus(response.data.data.status === 3 ? 2 : response.data.data.status);
+            listJobPositionTemp.forEach((item) => {
+              console.log(item);
+              if (item.id === response.data.data.job_position_id) {
+                setJobPosition({ id: item.id, label: item.name });
+              }
+            });
+            setWorkingStyle(response.data.data.working_style_id);
+            setWorkingPlace(response.data.data.working_place);
+            if (pathname.includes('/employee/job-post/edit')) {
+              setStartDay(dayjs(response.data.data.start_time));
+              setEndDay(dayjs(response.data.data.end_time));
+              setDisabledStartDay(!dayjs().isSameOrBefore(dayjs(response.data.data.start_time), 'day', 'month', 'year'));
+              setDisabledEndDay(!dayjs().isSameOrBefore(dayjs(response.data.data.end_time), 'day', 'month', 'year'));
+            } else {
+              setStartDay(dayjs());
+              setEndDay(dayjs().add(1, 'day'));
+              setDisabledStartDay(!dayjs().isSameOrBefore(dayjs(startDay), 'day', 'month', 'year'));
+              setDisabledEndDay(!dayjs().isSameOrBefore(dayjs(endDay), 'day', 'month', 'year'));
             }
+
+            axios({
+              url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOSTSKILL}?jobPostId=${id}`,
+              method: 'get',
+              // headers: {
+              //   'Authorization': `Bearer ${token}`
+              // }
+            }).then((response) => {
+              const listJobPostSkill = response.data.data;
+              console.log(response.data.data);
+              listJobPostSkill.forEach((element, index) => {
+                setSkill((prev) => ([
+                  ...prev, {
+                    index,
+                    id: element.skill_id,
+                  }
+                ]));
+                setMapSkillAndSkillLevel(new Map(mapSkillAndSkillLevel.set(index, {
+                  job_post_skill_id: element.id,
+                  skill_id: element.skill_id,
+                  skill_level: element.skill_level
+                })));
+                axios({
+                  url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}/${element.skill_id}`,
+                  method: 'get',
+                  // headers: {
+                  //   Authorization: `Bearer ${token}`
+                  // }
+                }).then((response) => {
+                  const listSkillTemp = response.data.data;
+                  axios({
+                    url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILLLEVEL}?skillGroupId=${response.data.data.skill_group_id}`,
+                    method: 'get',
+                    // headers: {
+                    //   'Authorization': `Bearer ${token}`
+                    // }
+                  }).then((response) => {
+                    setListSkillLevel((prev) => ([
+                      ...prev,
+                      {
+                        index,
+                        skillId: element.skill_id,
+                        skillName: listSkillTemp.name,
+                        skillLevel: response.data.data,
+                      }
+                    ]));
+                  }).catch(error => console.log(error));
+
+                  axios({
+                    url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILLLEVEL}?skillGroupId=${response.data.data.skill_group_id}&name=${element.skill_level}`,
+                    method: 'get',
+                    // headers: {
+                    //   'Authorization': `Bearer ${token}`
+                    // }
+                  }).then((response) => {
+                    const listSkillLevel = response.data.data;
+                    for (let index = 0; index < listSkillLevel.length; index += 1) {
+                      const skillLevel = listSkillLevel[index];
+                      if (skillLevel.name === element.skill_level) {
+                        setSkillLevel((prev) => ([
+                          ...prev, {
+                            index,
+                            id: skillLevel.id,
+                            name: skillLevel.name
+                          }
+                        ]));
+                      }
+                    }
+
+                  }).catch(error => console.log(error));
+                }).catch(error => console.log(error));
+              });
+
+              setOldMapSkillAndSkillLevel(mapSkillAndSkillLevel);
+
+              axios({
+                url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}`,
+                method: 'get',
+                // headers: {
+                //   'Authorization': `Bearer ${token}`
+                // },
+              }).then((response) => {
+                const listSkill = response.data.data;
+                for (let index = 0; index < listJobPostSkill.length; index += 1) {
+                  append({ skill: listSkill });
+                  setDisabledField(false);
+                }
+              }).catch(error => console.log(error));
+
+            }).catch(error => console.log(error));
+
+            axios({
+              url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_ALBUMIMAGE}?jobPostId=${id}`,
+              method: 'get',
+              // headers: {
+              //   'Authorization': `Bearer ${token}`
+              // }
+            }).then((response) => {
+              // eslint-disable-next-line array-callback-return
+              response.data.data.map((element) => {
+                fileUrlImage = [...fileUrlImage, { id: element.id, url_image: element.url_image }];
+              });
+
+              oldFileUrlImage = fileUrlImage;
+            }).catch(error => console.log(error));
+            setActiveStep(0);
+            setLoadingData(false);
           }).catch(error => console.log(error));
 
         }).catch(error => console.log(error));
 
-        axios({
-          url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_ALBUMIMAGE}?jobPostId=${id}`,
-          method: 'get',
-          // headers: {
-          //   'Authorization': `Bearer ${token}`
-          // }
-        }).then((response) => {
-          // eslint-disable-next-line array-callback-return
-          response.data.data.map((element) => {
-            fileUrlImage = [...fileUrlImage, { id: element.id, url_image: element.url_image }];
-          });
-
-          oldFileUrlImage = fileUrlImage;
-        }).catch(error => console.log(error));
-        setActiveStep(0);
-        setLoadingData(false);
       }).catch(error => console.log(error));
+
     }
   }, [cancel]);
 
@@ -913,6 +946,7 @@ export default function CreateJobPost() {
                               ...preState,
                               jobPosition: false
                             }));
+                            console.log(newValue);
                             setJobPosition(newValue);
                           }}
                           renderInput={(params) => <TextField {...params} label="Vị trí công việc" />}
@@ -922,7 +956,7 @@ export default function CreateJobPost() {
                     </Grid>
                     <Grid item xs={12}>
                       {/* <TextField variant='outlined' multiline label='Mô tả công việc' {...register('description')} fullWidth /> */}
-                      <Typography variant='h6' gutterBottom>Mô tả:</Typography>
+                      <Typography variant='subtitle1' gutterBottom component='div'>Mô tả <Box display="inline" fontWeight='normal' fontSize='14px'>(Tối đa 4000 kí tự)</Box>:</Typography>
                       <div style={{ border: '1px solid #ccc' }}>
                         <Editor
                           toolbar={{
@@ -941,7 +975,15 @@ export default function CreateJobPost() {
                           }}
                           onBlur={() => {
                             if (editorState.getCurrentContent().hasText()) {
-                              setDescription(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+                              const description = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+                              if (description.toString().length > 4000) {
+                                setHasError((preState) => ({
+                                  ...preState,
+                                  description: true
+                                }));
+                                return;
+                              }
+                              setDescription(description);
                               setHasError((preState) => ({
                                 ...preState,
                                 description: false
@@ -983,7 +1025,7 @@ export default function CreateJobPost() {
                         </Select> */}
 
                         <Autocomplete
-                          value={listSkillLevel[index]?.skillId}
+                          value={listSkillLevel[index]?.skillName}
                           options={item.skill.map((el) => ({ id: el.id, label: el.name }))}
                           onChange={(e, value) => handleChangeSkill(e, value, index)}
                           renderInput={(params) => <TextField {...params} label="Kĩ năng" />}
@@ -1007,8 +1049,10 @@ export default function CreateJobPost() {
                           )}
                         </Select> */}
 
+                        {console.log(skillLevel)}
+
                         <Autocomplete
-                          value={skillLevel[index]?.id}
+                          value={skillLevel[index]?.name}
                           options={listSkillLevel[index]?.skillLevel.map((el) => ({ id: el.id, label: el.name }))}
                           onChange={(e, value) => handleChangeSkillLevel(e, value, index)}
                           disabled={skillLevel[index]?.id ? false : disabledField}

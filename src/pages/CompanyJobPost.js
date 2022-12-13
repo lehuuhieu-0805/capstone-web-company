@@ -175,7 +175,7 @@ export default function CompanyJobPost() {
   useEffect(() => {
     // setLoadingButton(true)
     axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/job-posts?companyId=${localStorage.getItem('company_id')}&status=${statusJobPost === 5 ? '' : statusJobPost}`,
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/job-posts?companyId=${localStorage.getItem('company_id')}&status=${statusJobPost === 5 ? '' : statusJobPost}&sort-key=CreateDate&sort-order=DESC`,
       method: 'get',
     }).then((response) => {
       console.log(response);
@@ -369,6 +369,7 @@ export default function CompanyJobPost() {
                 onClick={() => {
                   setFilterName('');
                   setStatusJobPost(tab.value);
+                  setPage(0);
                 }}
               />
             ))}

@@ -65,6 +65,24 @@ export default function AccountPopover({ company }) {
           linkTo: '/change-password',
         },
       ];
+    } else if (role === 'EMPLOYEE') {
+      MENU_OPTIONS = [
+        {
+          label: 'Thông tin nhân viên',
+          icon: 'eva:home-fill',
+          linkTo: '/employee/information',
+        },
+        {
+          label: 'Thông tin công ty',
+          icon: 'eva:person-fill',
+          linkTo: '/profile',
+        },
+        {
+          label: 'Đổi mật khẩu',
+          icon: 'eva:person-fill',
+          linkTo: '/change-password',
+        },
+      ];
     }
   }, [role]);
 

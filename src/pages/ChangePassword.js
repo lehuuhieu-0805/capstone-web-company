@@ -20,6 +20,8 @@ const schema = Yup.object().shape({
 });
 
 export default function ChangePassword() {
+  const token = localStorage.getItem('token');
+
   const [loadingButton, setLoadingButton] = useState(false);
   const [showPasswordOld, setShowPasswordOld] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -49,9 +51,9 @@ export default function ChangePassword() {
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_UPDATE_PASSWORD_EMPLOYEE}?id=${localStorage.getItem('user_id')}&currentPassword=${data.passwordOld}&newPassword=${data.passwordNew}`,
         method: 'put',
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }).then(() => {
         setLoadingButton(false);
         setSeverity('success');
@@ -63,6 +65,10 @@ export default function ChangePassword() {
         if (error.response.data.message.trim() === 'Current password not correct!!!') {
           setSeverity('error');
           setMessageAlert('Mật khẩu cũ không đúng');
+          setOpenAlert(true);
+        } else if (error.response.data.message.trim() === 'Current password equal new password!!!') {
+          setSeverity('error');
+          setMessageAlert('Mật khẩu mới không được trùng với mật khẩu cũ');
           setOpenAlert(true);
         } else {
           setSeverity('error');
@@ -76,9 +82,9 @@ export default function ChangePassword() {
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_UPDATE_PASSWORD_USER}?id=${localStorage.getItem('user_id')}&currentPassword=${data.passwordOld}&newPassword=${data.passwordNew}`,
         method: 'put',
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }).then(() => {
         setLoadingButton(false);
         setSeverity('success');
@@ -86,10 +92,13 @@ export default function ChangePassword() {
         setOpenAlert(true);
         reset();
       }).catch((error) => {
-        console.log(error);
         if (error.response.data.message.trim() === 'Current password not correct!!!') {
           setSeverity('error');
           setMessageAlert('Mật khẩu cũ không đúng');
+          setOpenAlert(true);
+        } else if (error.response.data.message.trim() === 'Current password equal new password!!!') {
+          setSeverity('error');
+          setMessageAlert('Mật khẩu mới không được trùng với mật khẩu cũ');
           setOpenAlert(true);
         } else {
           setSeverity('error');
@@ -177,7 +186,7 @@ export default function ChangePassword() {
         </Container>
       </Page>
 
-      <AlertMessage openAlert={openAlert} setOpenAlert={setOpenAlert} severity={severity} messageAlert={messageAlert} />
+      <AlertMessage openAlert={openAlert} setOpenAlert={setOpenAlert} severity={severity} alertMessage={messageAlert} />
     </>
   );
 }
