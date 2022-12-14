@@ -87,20 +87,19 @@ export default function LoginForm() {
       //   return;
       // }
       localStorage.setItem('token', response.data.token);
-      const company = jwtDecode(response.data.token);
+      const decode = jwtDecode(response.data.token);
 
       // console.log(company)
-      if (company.role === 'COMPANY') {
+      if (decode.role === 'COMPANY') {
 
-        localStorage.setItem('user_id', company.Id);
-        localStorage.setItem('company_id', company.Id);
-        localStorage.setItem('role', company.role);
+        localStorage.setItem('user_id', decode.Id);
+        localStorage.setItem('company_id', decode.Id);
+        localStorage.setItem('role', decode.role);
         setLoadingButtonLogin(false);
         navigate('/company/dashboard?status=logged', { replace: true });
-      }
-      if (company.role === 'EMPLOYEE') {
+      } else if (decode.role === 'EMPLOYEE') {
         axios({
-          url: `https://stg-api-itjob.unicode.edu.vn/api/v1/employees/${company.Id}`,
+          url: `https://stg-api-itjob.unicode.edu.vn/api/v1/employees/${decode.Id}`,
           method: 'get',
           // headers: {
           //   Authorization: `Bearer ${token}`
@@ -115,9 +114,10 @@ export default function LoginForm() {
             setLoadingButtonLogin(false);
           } else {
             // console.log(response.data.data)
-            localStorage.setItem('user_id', company.Id);
-            localStorage.setItem('role', company.role);
+            localStorage.setItem('user_id', decode.Id);
+            localStorage.setItem('role', decode.role);
             localStorage.setItem('company_id', response.data.data.company_id);
+            localStorage.setItem('employee_id', decode.Id);
             setLoadingButtonLogin(false);
             navigate('/employee/dashboard?status=logged', { replace: true });
           }

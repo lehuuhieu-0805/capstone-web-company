@@ -435,7 +435,8 @@ export default function TableApplicant(props) {
                 <TableRow>
                   <TableCell>No.</TableCell>
                   <TableCell>Tên</TableCell>
-                  {/* <TableCell>Địa chỉ email</TableCell> */}
+                  {status === 3 && <TableCell>Địa chỉ email</TableCell>}
+                  {status === 3 && <TableCell>Số điện thoại</TableCell>}
                   {/* <TableCell>Kĩ năng</TableCell> */}
                   <TableCell>Vị trí công việc</TableCell>
                   <TableCell>Hình thức làm việc</TableCell>
@@ -458,7 +459,8 @@ export default function TableApplicant(props) {
                         </Typography>
                       </Stack>
                     </TableCell>
-                    {/* <TableCell align="left">{profileApplicant.email}</TableCell> */}
+                    {status === 3 && (<TableCell align="left">{profileApplicant.email}</TableCell>)}
+                    {status === 3 && (<TableCell align="left">{profileApplicant.phone}</TableCell>)}
                     {profileApplicant?.job_position_id ? listJobPosition.map((item) => item.id === profileApplicant.job_position_id ? <TableCell align="left">{item.name}</TableCell> : null) : <TableCell align="left">{null}</TableCell>}
                     {profileApplicant?.working_style_id ? listWorkingStyle.map((item) => item.id === profileApplicant.working_style_id ? <TableCell align="left">{item.name}</TableCell> : null) : <TableCell align="left">{null}</TableCell>}
                     <TableCell align="right" style={{ display: 'flex', alignItems: 'center' }}>

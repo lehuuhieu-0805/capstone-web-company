@@ -109,13 +109,21 @@ export default function NotificationsPopover() {
     setListNoti([]);
   }, []);
 
+  const role = localStorage.getItem('role');
+
   useEffect(() => {
     (async () => {
-      subscribeToTopic(`${localStorage.getItem('company_id')}`);
-      const noti = await onMessageListener();
-      setListNoti((prev) => ([...prev, noti.notification]));
+      if (role === 'COMPANY') {
+        subscribeToTopic(`${localStorage.getItem('company_id')}`);
+        const noti = await onMessageListener();
+        setListNoti((prev) => ([...prev, noti.notification]));
+      } else if (role === 'EMPLOYEE') {
+        subscribeToTopic(`${localStorage.getItem('employee_id')}`);
+        const noti = await onMessageListener();
+        setListNoti((prev) => ([...prev, noti.notification]));
+      }
     })();
-  }, [listNoti]);
+  }, [role]);
 
   return (
     <>

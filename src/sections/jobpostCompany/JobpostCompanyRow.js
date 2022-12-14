@@ -200,10 +200,10 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
             return (
               <Label
 
-                color={'success'}
+                color={'info'}
                 sx={{ textTransform: 'capitalize' }}
               >
-                Hoạt Động
+                Đang hoạt Động
               </Label>
 
             );
@@ -212,10 +212,10 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
             return (
               <Label
 
-                color={'primary'}
+                color={'warning'}
                 sx={{ textTransform: 'capitalize' }}
               >
-                Ẩn
+                Đã hết hạn
               </Label>
 
             );
@@ -224,10 +224,10 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
             return (
               <Label
 
-                color={'warning'}
+                color={'info'}
                 sx={{ textTransform: 'capitalize' }}
               >
-                Chờ duyệt
+                Đang duyệt
               </Label>
 
             );
@@ -248,7 +248,7 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
             return (
               <Label
 
-                color={'warning'}
+                color={'info'}
                 sx={{ textTransform: 'capitalize' }}
               >
                 Chờ Hoạt Động
@@ -361,7 +361,46 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
                       </h4>
                     </Grid>
                     <Grid item xs={2} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <Chip label=" Chờ duyệt" color="warning" />
+                      {(() => {
+                        if (row.status === 0) {
+                          return (
+                            <Chip
+                              label="Đang hoạt động"
+                              color="info"
+                            />
+                          );
+                        }
+                        if (row.status === 1) {
+                          return (
+                            <Chip
+                              label='Đã hết hạn'
+                              color='warning'
+                            />
+                          );
+                        }
+                        if (row.status === 2) {
+                          return (
+                            <Chip
+                              label='Đang duyệt'
+                              color='info'
+                            />
+                          );
+                        }
+                        if (row.status === 4) {
+                          return (
+                            <Chip
+                              label='Chờ hoạt động'
+                              color='info'
+                            />
+                          );
+                        }
+                        return (
+                          <Chip
+                            label='Từ chối'
+                            color='error'
+                          />
+                        );
+                      })()}
                     </Grid>
                   </Grid>
                 </CardContent>

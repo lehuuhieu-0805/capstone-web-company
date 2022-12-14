@@ -108,7 +108,7 @@ export default function Deposit() {
               setMoney(format2);
             }} label='Số tiền cần nạp' fullWidth sx={{ mb: 2 }} />
             {error.error && <p style={{ color: 'red' }}>{error.message}</p>}
-            {exchangeMoney !== '' && <p style={{ color: 'red' }}> = {exchangeMoney} Tagent coin</p>}
+            {exchangeMoney !== '' && <p style={{ color: '#2065D1' }}> = {exchangeMoney} Tagent coin</p>}
             <FormControlLabel value='end' control={<Radio checked />} label={
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <img src='https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2FLogo-VNPay.png?alt=media&token=fd61a9dc-f27f-41db-99d9-7d45036289a0' alt="logo" width='50' />

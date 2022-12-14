@@ -81,10 +81,10 @@ export default function ProfileAbout({ profile }) {
           </Typography>
         </Stack>
 
-        <Stack direction="row">
+        {/* <Stack direction="row">
           <IconStyle icon={'eva:email-fill'} />
           <Typography variant="body2">{Applicantinfo.email}</Typography>
-        </Stack>
+        </Stack> */}
 
 
       </Stack>

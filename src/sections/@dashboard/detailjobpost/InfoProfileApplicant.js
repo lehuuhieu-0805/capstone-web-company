@@ -70,7 +70,7 @@ export default function InfoProfileApplicant({ profileApplicant, applicant, jobP
           </Stack>
         </Grid>
       </Grid>
-     
+
     </Container >
   );
 }

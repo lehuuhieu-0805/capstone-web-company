@@ -154,7 +154,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
               {company?.name}
             </Typography>
             <Typography variant="subtitle2" sx={{ color: 'green' }}>
-              {company?.is_premium ? 'Premium' : ''}
+              {isPremium ? 'Premium' : ''}
             </Typography>
           </Box>
         </AccountStyle>
@@ -198,7 +198,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
 
       {(() => {
         if (localStorage.getItem('role') === 'COMPANY') {
-          if (company?.is_premium) {
+          if (isPremium) {
             return null;
           }
           return (
@@ -238,7 +238,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
         maxWidth="md"
       >
         <DialogTitle id="alert-dialog-title">
-          Bạn chắc chắn muốn nâng cấp tài khoản lên premium với phí là 5000?
+          Bạn chắc chắn muốn nâng cấp tài khoản lên premium với phí là 5000 Tagent coin?
         </DialogTitle>
         <DialogContent>
           <Typography variant='subtitle1' gutterBottom>Khi bạn nâng cấp tài khoản lên premium:</Typography>

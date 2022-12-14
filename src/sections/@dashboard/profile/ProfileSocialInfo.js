@@ -46,14 +46,35 @@ export default function ProfileSocialInfo({ profile }) {
     <Card>
       <CardHeader title="Liên hệ" />
       <Stack spacing={2} sx={{ p: 3 }}>
-        {SOCIALS.map((link) => (
+        {/* {SOCIALS.map((link) => (
           <Stack key={link.name} direction="row" alignItems="center">
             {link.icon}
             <Link component="span" variant="body2" color="text.primary" noWrap>
               {link.href}
             </Link>
           </Stack>
-        ))}
+        ))} */}
+
+        <Stack key='Linkedin' direction="row" alignItems="center">
+          <IconStyle icon={'eva:linkedin-fill'} color="#006097" />
+          <Link component="span" variant="body2" color="text.primary" noWrap>
+            {`www.linkedin.com/${profile.linked_in_link}`}
+          </Link>
+        </Stack>
+        <Stack key='githubLink' direction="row" alignItems="center">
+          <IconStyle icon={'eva:twitter-fill'} color="#1C9CEA" />
+          <Link component="span" variant="body2" color="text.primary" noWrap>
+            {`www.github.com/${profile.github_link}`}
+          </Link>
+        </Stack>
+        <Stack key='Facebook' direction="row" alignItems="center">
+          <IconStyle icon={'eva:facebook-fill'} color="#1877F2" />
+          <Link component="span" variant="body2" color="text.primary" noWrap>
+            {`www.fb.com/${profile.facebook_link}`}
+          </Link>
+        </Stack>
+
+
       </Stack>
     </Card>
   );
