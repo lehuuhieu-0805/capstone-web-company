@@ -22,6 +22,8 @@ const schema = yup.object({
 });
 
 export default function Profile() {
+  const token = localStorage.getItem('token');
+
   const [disabled, setDisabled] = useState(true);
   const [showButtonEdit, setShowButtonEdit] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
@@ -67,17 +69,17 @@ export default function Profile() {
     axios({
       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_EMPLOYEE}/${employeeId}`,
       method: 'put',
-      // headers: {
-      //   Authorization: `Bearer ${token}`
-      // },
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
       data
     }).then(() => {
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_EMPLOYEE}/${employeeId}`,
         method: 'get',
-        // headers: {
-        //   Authorization: `Bearer ${token}`
-        // }
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       }).then((response) => {
         setDisabled(true);
         setLoadingButton(false);
