@@ -114,20 +114,26 @@ export default function NotificationsPopover() {
   const role = localStorage.getItem('role');
 
   useEffect(() => {
+    if (role === 'COMPANY') {
+      subscribeToTopic(`${localStorage.getItem('company_id')}`);
+    } else if (role === 'EMPLOYEE') {
+      subscribeToTopic(`${localStorage.getItem('employee_id')}`);
+    }
+  }, [role]);
+
+  useEffect(() => {
     (async () => {
       if (role === 'COMPANY') {
-        subscribeToTopic(`${localStorage.getItem('company_id')}`);
         const noti = await onMessageListener();
         noti.notification.job_post_id = noti.data.jobPostId;
         setListNoti((prev) => ([...prev, noti.notification]));
       } else if (role === 'EMPLOYEE') {
-        subscribeToTopic(`${localStorage.getItem('employee_id')}`);
         const noti = await onMessageListener();
         noti.notification.job_post_id = noti.data.jobPostId;
         setListNoti((prev) => ([...prev, noti.notification]));
       }
     })();
-  }, [role]);
+  }, [role, listNoti]);
 
   return (
     <>

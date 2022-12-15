@@ -11,6 +11,8 @@ import { api } from "../../../constants";
 import InfoProfileApplicant from "./InfoProfileApplicant";
 
 export default function TableApplicant(props) {
+  const token = localStorage.getItem('token');
+
   const [listProfileApplicant, setListProfileApplicant] = useState([]);
   const [listJobPosition, setListJobPosition] = useState([]);
   const [listWorkingStyle, setListWorkingStyle] = useState([]);
@@ -377,7 +379,7 @@ export default function TableApplicant(props) {
         profile_applicant_id,
         job_post_id: jobPostId,
         is_job_post_like: true,
-        is_profile_applicant_like: false
+        // is_profile_applicant_like: false
       }
     }).then(() => {
       setSeverity('success');
@@ -522,4 +524,4 @@ export default function TableApplicant(props) {
       )}
     </>
   );
-}
+};
