@@ -191,7 +191,7 @@ export default function NotificationsPopover() {
               }
             >
               {listNoti?.map((notification, index) => (
-                <NotificationItem key={index} notification={notification} />
+                <NotificationItem key={index} notification={notification} handleClose={handleClose} />
               ))}
             </List>
           )}
@@ -224,7 +224,7 @@ NotificationItem.propTypes = {
   }),
 };
 
-function NotificationItem({ notification }) {
+function NotificationItem({ notification, handleClose }) {
   const navigate = useNavigate();
   const { avatar, title, body } = renderContent(notification);
 
@@ -238,7 +238,10 @@ function NotificationItem({ notification }) {
           bgcolor: 'action.selected',
         }),
       }}
-      onClick={() => navigate(`/employee/job-post/detail/${notification.job_post_id}`)}
+      onClick={() => {
+        navigate(`/employee/job-post/detail/${notification.job_post_id}`);
+        handleClose();
+      }}
     >
       <ListItemAvatar>
         <Avatar sx={{ bgcolor: 'background.neutral' }} src='https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2F1668088254946.0776.jpg?alt=media&token=839fb24d-a21b-4979-80b2-00375f24f7a3' />

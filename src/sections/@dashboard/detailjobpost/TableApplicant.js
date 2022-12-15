@@ -366,59 +366,60 @@ export default function TableApplicant(props) {
 
   const handleLikeButton = (profile_applicant_id, index) => {
     setLoadingLikeButton(index);
-    if (status === 0) {
-      axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_LIKE}`,
-        method: 'post',
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // }
-        data: {
-          profile_applicant_id,
-          job_post_id: jobPostId,
-          is_job_post_like: true,
-          is_profile_applicant_like: false
-        }
-      }).then(() => {
-        setSeverity('success');
-        setAlertMessage('Bạn đã thích ứng viên thành công');
-        setOpenAlert(true);
-        setLoadingLikeButton(-1);
-        setReloadData(!reloadData);
-      }).catch(error => {
-        console.log(error);
-        setSeverity('error');
-        setAlertMessage('Có lỗi xảy ra');
-        setOpenAlert(true);
-        setLoadingLikeButton(-1);
-        setReloadData(!reloadData);
-      });
-    } else if (status === 1) {
-      axios({
-        url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_COMPANY_ACCEPT_LIKE}`,
-        method: 'put',
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-        data: {
-          job_post_id: jobPostId,
-          profile_applicant_id
-        }
-      }).then(() => {
-        setSeverity('success');
-        setAlertMessage('Bạn đã thích ứng viên thành công');
-        setOpenAlert(true);
-        setLoadingLikeButton(-1);
-        setReloadData(!reloadData);
-      }).catch(error => {
-        console.log(error);
-        setSeverity('error');
-        setAlertMessage('Có lỗi xảy ra');
-        setOpenAlert(true);
-        setLoadingLikeButton(-1);
-        setReloadData(!reloadData);
-      });
-    }
+    // if (status === 0) {
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.POST_LIKE}`,
+      method: 'post',
+      // headers: {
+      //   Authorization: `Bearer ${token}`,
+      // }
+      data: {
+        profile_applicant_id,
+        job_post_id: jobPostId,
+        is_job_post_like: true,
+        is_profile_applicant_like: false
+      }
+    }).then(() => {
+      setSeverity('success');
+      setAlertMessage('Bạn đã thích ứng viên thành công');
+      setOpenAlert(true);
+      setLoadingLikeButton(-1);
+      setReloadData(!reloadData);
+    }).catch(error => {
+      console.log(error);
+      setSeverity('error');
+      setAlertMessage('Có lỗi xảy ra');
+      setOpenAlert(true);
+      setLoadingLikeButton(-1);
+      setReloadData(!reloadData);
+    });
+    // } 
+    // else if (status === 1) {
+    //   axios({
+    //     url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.PUT_COMPANY_ACCEPT_LIKE}`,
+    //     method: 'put',
+    //     // headers: {
+    //     //   Authorization: `Bearer ${token}`,
+    //     // },
+    //     data: {
+    //       job_post_id: jobPostId,
+    //       profile_applicant_id
+    //     }
+    //   }).then(() => {
+    //     setSeverity('success');
+    //     setAlertMessage('Bạn đã thích ứng viên thành công');
+    //     setOpenAlert(true);
+    //     setLoadingLikeButton(-1);
+    //     setReloadData(!reloadData);
+    //   }).catch(error => {
+    //     console.log(error);
+    //     setSeverity('error');
+    //     setAlertMessage('Có lỗi xảy ra');
+    //     setOpenAlert(true);
+    //     setLoadingLikeButton(-1);
+    //     setReloadData(!reloadData);
+    //   });
+    // }
   };
 
   return (
