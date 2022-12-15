@@ -3,6 +3,7 @@ import { set, sub } from 'date-fns';
 import { noCase } from 'change-case';
 import { faker } from '@faker-js/faker';
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Box,
@@ -26,6 +27,7 @@ import Iconify from '../../components/Iconify';
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
 import { onMessageListener, subscribeToTopic } from '../../utils/firebase';
+
 
 // ----------------------------------------------------------------------
 
@@ -116,10 +118,12 @@ export default function NotificationsPopover() {
       if (role === 'COMPANY') {
         subscribeToTopic(`${localStorage.getItem('company_id')}`);
         const noti = await onMessageListener();
+        noti.notification.job_post_id = noti.data.jobPostId;
         setListNoti((prev) => ([...prev, noti.notification]));
       } else if (role === 'EMPLOYEE') {
         subscribeToTopic(`${localStorage.getItem('employee_id')}`);
         const noti = await onMessageListener();
+        noti.notification.job_post_id = noti.data.jobPostId;
         setListNoti((prev) => ([...prev, noti.notification]));
       }
     })();
@@ -190,8 +194,8 @@ export default function NotificationsPopover() {
                 <NotificationItem key={index} notification={notification} />
               ))}
             </List>
-
           )}
+
         </Scrollbar>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -221,6 +225,7 @@ NotificationItem.propTypes = {
 };
 
 function NotificationItem({ notification }) {
+  const navigate = useNavigate();
   const { avatar, title, body } = renderContent(notification);
 
   return (
@@ -233,7 +238,7 @@ function NotificationItem({ notification }) {
           bgcolor: 'action.selected',
         }),
       }}
-      onClick={() => console.log(1)}
+      onClick={() => navigate(`/employee/job-post/detail/${notification.job_post_id}`)}
     >
       <ListItemAvatar>
         <Avatar sx={{ bgcolor: 'background.neutral' }} src='https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2F1668088254946.0776.jpg?alt=media&token=839fb24d-a21b-4979-80b2-00375f24f7a3' />
@@ -242,14 +247,14 @@ function NotificationItem({ notification }) {
         primary={title}
         secondary={
           <Typography
-            variant="caption"
+            variant="subtitle2"
             sx={{
               mt: 0.5,
               display: 'flex',
               alignItems: 'center',
               color: 'text.disabled',
             }}
-          >&nbsp; {body}
+          >{body}
             {/* <Iconify icon="eva:clock-outline" sx={{ mr: 0.5, width: 16, height: 16 }} />
             {fToNow(notification.createdAt)} */}
           </Typography>

@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker';
+import dayjs from 'dayjs';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography } from '@mui/material';
+import { Grid, Container, Typography, LinearProgress } from '@mui/material';
 // components
 import Page from '../components/Page';
 import { api } from '../constants';
@@ -22,6 +23,7 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 import AlertMessage from '../components/AlertMessage';
+import BankingBalanceStatistics from '../sections/@dashboard/app/BankingBalanceStatistics';
 
 // ----------------------------------------------------------------------
 
@@ -32,9 +34,11 @@ export default function DashboardApp() {
   const [countActiveJobPost, setCountActiveJobPost] = useState(0);
   const [countHiddenJobPost, setCountHiddenJobPost] = useState(0);
   const [countPostingJobPost, setCountPostingJobPost] = useState(0);
+  const [day0, setDay0] = useState([]);
   const [openAlert, setOpenAlert] = useState(false);
   const [messageAlert, setMessageAlert] = useState('');
   const [severity, setSeverity] = useState('success');
+  const [loadingData, setLoadingData] = useState(true);
 
   const getQueryParam = getQueryParams();
 
@@ -131,8 +135,104 @@ export default function DashboardApp() {
   }
   }, []);
 
+  useEffect(() => {
+    getAll()
+  }, []);
+
+  const getAll = async() => {
+   
+      await  axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-1, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+
+      })
+      .catch((error) => console.log(error));
+      await  axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-2, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-1, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+      })
+      .catch((error) => console.log(error));
+      await   axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-3, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-2, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        console.log(response)
+        day0.push(response.data);
+
+      })
+      .catch((error) => console.log(error));
+
+      await   axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-4, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-3, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+      await   axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-5, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-4, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+      await   axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-6, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-5, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+      await   axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-7, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-6, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+      await  axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-8, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-7, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+      await  axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-9, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-8, 'day').format('YYYY-MM-DD')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+      
+      setLoadingData(false);
+  }
+
   return (
     <Page title="Trang chủ">
+        {loadingData ? (
+        <LinearProgress fullwidth="true" />
+      ) : (
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Quản lý bài viết tuyển dụng
@@ -317,8 +417,27 @@ export default function DashboardApp() {
             />
           </Grid> */}
         </Grid>
-      </Container>
+        <Grid item xs={12}>
+              <BankingBalanceStatistics
+                title="Thống kê sử dụng"
+                subheader="Lượt Like trong công ty"
+                chartLabels={[`${dayjs().add(-8, 'day').format('DD/MM')}`, `${dayjs().add(-7, 'day').format('DD/MM')}`, `${dayjs().add(-6, 'day').format('DD/MM')}`, `${dayjs().add(-5, 'day').format('DD/MM')}`, `${dayjs().add(-4, 'day').format('DD/MM')}`, `${dayjs().add(-3, 'day').format('DD/MM')}`, `${dayjs().add(-2, 'day').format('DD/MM')}`, `${dayjs().add(-1, 'day').format('DD/MM')}`, `${dayjs().format('DD/MM')}`]}
+                chartData={[
+                  {
+                    year: 'Ngày',
+                    data: [
+                      { name: 'Like', data: day0 },
 
+                      // { name: 'Match', data: [10, 34, 13, 56, 77, 88, 99, 77, 45] },
+                    
+                    ],
+                  },
+
+                ]}
+              />
+            </Grid>
+      </Container>
+      )}
       <AlertMessage openAlert={openAlert} setOpenAlert={setOpenAlert} alertMessage={messageAlert} severity={severity} />
     </Page>
   );

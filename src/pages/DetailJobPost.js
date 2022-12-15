@@ -117,8 +117,8 @@ export default function DetailJobPost() {
               <HeaderBreadcrumbs
                 heading={jobPostDetail?.title}
                 links={[
-                  { name: 'Bài viết tuyển dụng', href: '/company/job-post' },
-                  { name: 'Chi tiết bài viết tuyển dụng', href: '/company/job-post/detail' },
+                  { name: 'Bài viết tuyển dụng', href: '/employee/job-post' },
+                  { name: 'Chi tiết bài viết tuyển dụng', href: '/employee/job-post/detail' },
                 ]}
               />
             </Stack>

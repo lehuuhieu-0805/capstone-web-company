@@ -1,7 +1,8 @@
-import { Button, Card, CardContent, CardHeader, Chip, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid, ImageList, Paper, Stack, Table, TableCell, TableContainer, TablePagination, TableRow, Typography } from "@mui/material";
+import { Button, Card, CardContent, CardHeader, Chip, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid, ImageList, ImageListItem, Paper, Stack, Table, TableCell, TableContainer, TablePagination, TableRow, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
 import dayjs from 'dayjs';
+import ModalImage from 'react-modal-image';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
@@ -11,6 +12,8 @@ import TableToolbar from "../components/TableToolbar";
 import { api } from "../constants";
 import useTable, { getComparator } from '../hooks/useTable';
 import TableHeadCustom from "../TableHeadCustom";
+import Iconify from "../components/Iconify";
+import InfoProfileApplicant from "../sections/@dashboard/detailjobpost/InfoProfileApplicant";
 
 
 const TABLE_HEAD = [
@@ -24,7 +27,8 @@ export default function HistoryMatching() {
   const [listHistory, setListHistory] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [filterName, setFilterName] = useState('');
-
+  const [openDialogDetail, setOpenDialogDetail] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const {
     onSort,
     page,
@@ -35,7 +39,12 @@ export default function HistoryMatching() {
     order,
     orderBy
   } = useTable();
-
+  const handleCloseDialogDetail = () => {
+    setOpenDialogDetail(false);
+  };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
     setPage(0);
@@ -65,36 +74,19 @@ export default function HistoryMatching() {
             if (listLike?.length > 0) {
               listLike.forEach((item) => {
                 axios({
-                  url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_JOBPOST}/${item.job_post_id}`,
-                  method: 'get',
+                  url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_APPLICANT}/${item.profile_applicant.applicant_id}`,
+                  method: "get",
                   // headers: {
                   //   Authorization: `Bearer ${token}`
                   // }
                 }).then((response) => {
-                  const jobPost = response.data.data;
-                  axios({
-                    url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_PROFILE_APPLICANT}/${item.profile_applicant_id}`,
-                    method: 'get',
-                    // headers: {
-                    //   Authorization: `Bearer ${token}`
-                    // }
-                  }).then((response) => {
-                    const profileApplicant = response.data.data;
-                    axios({
-                      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_APPLICANT}/${profileApplicant.applicant_id}`,
-                      method: "get",
-                      // headers: {
-                      //   Authorization: `Bearer ${token}`
-                      // }
-                    }).then((response) => {
-                      const applicant = response.data.data;
-                      item.title = jobPost.title;
-                      item.name = applicant.name;
-                      console.log(item);
-                      setListHistory(prev => [...prev, item]);
-                    });
-                  }).catch(error => console.log(error));
-                }).catch(error => console.log(error));
+                  const applicant = response.data.data;
+               
+                  item.name = applicant.name;
+                  item.applicant = applicant;
+                  console.log(item);
+                  setListHistory(prev => [...prev, item]);
+                });
               });
             }
 
@@ -144,39 +136,22 @@ export default function HistoryMatching() {
                   orderBy={orderBy}
                 />
                 {dataFiltered.length > 0 ? dataFiltered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item) => (
+                 <>
                   <TableRow key={item.no} hover>
                     <TableCell>{item.no}</TableCell>
-                    <TableCell onClick={() => {
-
-                    }}>{item.title}</TableCell>
-                    <TableCell>{item.name}</TableCell>
+                    <TableCell 
+                    // onClick={() => setOpenDialogDetail(true)}
+                    >
+                    {item.job_post.title}
+                      </TableCell>
+                    <TableCell 
+                    // onClick={() => setOpenDialog(true)}
+                    >{item.name}</TableCell>
                     <TableCell>{dayjs(item.match_date).format('DD-MM-YYYY HH:mm:ss')}</TableCell>
                   </TableRow>
-                )) : (
-                  <TableRow>
-                    <TableCell colSpan={4}>
-                      <CustomNoRowsOverlay />
-                    </TableCell>
-                  </TableRow>
-                )}
-              </Table>
-            </TableContainer>
-            <TablePagination
-              labelRowsPerPage={'Số hàng mỗi trang'}
-              labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={dataFiltered.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={onChangePage}
-              onRowsPerPageChange={onChangeRowsPerPage}
-            />
-          </>
-        )}
-
+                  
         {/* <Dialog
-          open={openDialogJobPostDetail}
+          open={openDialogDetail}
           onClose={() => { }}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
@@ -192,9 +167,9 @@ export default function HistoryMatching() {
                     <Grid container spacing={2}>
 
                       <Grid item xs={10}>
-                        <h3>{row.title}</h3>
+                        <h3>{item.job_post.title}</h3>
                         <h4 style={{ fontWeight: 'normal' }}>
-                          {dayjs(row.create_date).format('DD-MM-YYYY HH:mm:ss')}
+                          {dayjs(item.job_post.create_date).format('DD-MM-YYYY HH:mm:ss')}
                         </h4>
                       </Grid>
                       <Grid item xs={2} style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -214,7 +189,7 @@ export default function HistoryMatching() {
                           <Box display="inline" fontWeight="fontWeightBold">
                             Số lượng tuyển:{' '}
                           </Box>
-                          {row.quantity}
+                          {item.job_post.quantity}
                         </Typography>
 
                       </Stack>
@@ -223,7 +198,7 @@ export default function HistoryMatching() {
                           <Box display="inline" fontWeight="fontWeightBold">
                             Hình thức làm việc:{' '}
                           </Box>
-                          {row.working_style.name}
+                          {item.job_post.working_style_id}
                         </Typography>
                       </Stack>
 
@@ -232,7 +207,7 @@ export default function HistoryMatching() {
                           <Box display="inline" fontWeight="fontWeightBold">
                             Địa điểm làm việc:{' '}
                           </Box>
-                          {row.working_place}
+                          {item.job_post.working_place}
                         </Typography>
                       </Stack>
 
@@ -241,7 +216,7 @@ export default function HistoryMatching() {
                           <Box display="inline" fontWeight="fontWeightBold">
                             Vị trí công việc:{' '}
                           </Box>
-                          {row.job_position.name}
+                          {item.job_post.job_position_id}
                         </Typography>
                       </Stack>
                       <Stack direction="row">
@@ -249,7 +224,7 @@ export default function HistoryMatching() {
                           <Box display="inline" fontWeight="fontWeightBold">
                             Số tiền:{' '}
                           </Box>
-                          {row.money}
+                          {item.job_post.money}
                         </Typography>
                       </Stack>
                     </Stack>
@@ -258,8 +233,8 @@ export default function HistoryMatching() {
                   <Stack direction="row">
 
                     <ImageList variant="quilted" cols={2} gap={8}>
-                      {row.album_images &&
-                        row.album_images.map((item) => (
+                      {item.job_post.album_images &&
+                        item.job_post.album_images.map((item) => (
                           <ImageListItem key={item.id}>
                             {item.url_image &&
 
@@ -284,17 +259,17 @@ export default function HistoryMatching() {
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
                           <h4>Mô tả:</h4>
-                          <h4 style={{ fontWeight: 'normal' }} dangerouslySetInnerHTML={{ __html: row.description }} />
+                          <h4 style={{ fontWeight: 'normal' }} dangerouslySetInnerHTML={{ __html: item.job_post.description }} />
                         </Grid>
                         <Grid item xs={6}>
                           <h4>Bắt đầu:</h4>
                           <h4 style={{ fontWeight: 'normal' }}>
-                            {dayjs(row.start_time).format('DD-MM-YYYY')}
+                            {dayjs(item.job_post.start_time).format('DD-MM-YYYY')}
                           </h4>
                         </Grid>
                         <Grid item xs={6}>
                           <h4>Kết thúc:</h4>
-                          <h4 style={{ fontWeight: 'normal' }}>{dayjs(row.end_time).format('DD-MM-YYYY')}</h4>
+                          <h4 style={{ fontWeight: 'normal' }}>{dayjs(item.job_post.end_time).format('DD-MM-YYYY')}</h4>
                         </Grid>
                       </Grid>
                     </Stack>
@@ -322,6 +297,54 @@ export default function HistoryMatching() {
             </Button>
           </DialogActions>
         </Dialog> */}
+
+        {/* <Dialog
+            open={openDialog}
+            onClose={handleCloseDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            fullWidth
+            maxWidth="xl"
+          >
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <DialogTitle id="alert-dialog-title">
+                Thông tin ứng viên
+              </DialogTitle>
+              <Iconify icon='ant-design:close-circle-outlined' sx={{
+                width: 30, height: 30, marginRight: 2, '&:hover': {
+                  cursor: 'pointer',
+                }
+              }} onClick={handleCloseDialog} />
+            </Stack>
+
+            <DialogContent>
+              <InfoProfileApplicant profileApplicant={item.profile_applicant} applicant={item.applicant} jobPosition={jobPositionDetail}  />
+            </DialogContent>
+          </Dialog> */}
+        </>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={4}>
+                      <CustomNoRowsOverlay />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </Table>
+            </TableContainer>
+            <TablePagination
+              labelRowsPerPage={'Số hàng mỗi trang'}
+              labelDisplayedRows={({ from, to, count }) => `${from}-${to} trong ${count} `}
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={dataFiltered.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={onChangePage}
+              onRowsPerPageChange={onChangeRowsPerPage}
+            />
+          </>
+        )}
+
 
       </Container>
     </Page>
