@@ -184,7 +184,7 @@ export default function User() {
       console.log(response);
       // setLoadingButtonRegister(false);
       setSeverity('success');
-      setMessageAlert('Thêm nhân viên thành công');
+      setMessageAlert('Tạo nhân viên thành công');
       setOpenAlert(true);
       setRefreshData(true);
       setLoadingButtonRegister(false);
@@ -199,7 +199,7 @@ export default function User() {
       } else {
         setLoadingButtonRegister(false);
         setSeverity('error');
-        setMessageAlert('Thêm nhân viên không thành công');
+        setMessageAlert('Tạo nhân viên không thành công');
         setOpenAlert(true);
       }
     });
@@ -245,7 +245,7 @@ export default function User() {
                   setOpenDialog(true);
                 }}
               >
-                Thêm nhân viên
+                Tạo nhân viên
               </Button>
             }
           />
@@ -316,7 +316,7 @@ export default function User() {
         fullWidth
         maxWidth="xs"
       >
-        <DialogTitle id="alert-dialog-title" sx={{ position: 'relative' }} >Thêm nhân viên</DialogTitle>
+        <DialogTitle id="alert-dialog-title" sx={{ position: 'relative' }} >Tạo nhân viên</DialogTitle>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
 
@@ -335,7 +335,7 @@ export default function User() {
           <DialogActions>
             <Button variant="outlined" onClick={handleCloseDialog}>Huỷ</Button>
             <LoadingButton type="submit" variant="contained" loading={loadingButtonRegister}>
-              Thêm
+              Lưu
             </LoadingButton>
           </DialogActions>
         </FormProvider>
