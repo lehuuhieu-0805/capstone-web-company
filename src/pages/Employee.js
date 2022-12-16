@@ -184,7 +184,7 @@ export default function User() {
       console.log(response);
       // setLoadingButtonRegister(false);
       setSeverity('success');
-      setMessageAlert('Tạo nhân viên thành công');
+      setMessageAlert('Tạo tài khoản nhân viên thành công');
       setOpenAlert(true);
       setRefreshData(true);
       setLoadingButtonRegister(false);
@@ -199,7 +199,7 @@ export default function User() {
       } else {
         setLoadingButtonRegister(false);
         setSeverity('error');
-        setMessageAlert('Tạo nhân viên không thành công');
+        setMessageAlert('Tạo tài khoản nhân viên không thành công');
         setOpenAlert(true);
       }
     });
@@ -231,7 +231,7 @@ export default function User() {
             heading="Danh sách nhân viên"
             links={[
               { name: 'Trang chủ', href: '/company/dashboard' },
-              { name: 'Nhân viên', href: '/company/dashboard' },
+              { name: 'Quản lý nhân viên', href: '/company/dashboard' },
 
             ]}
 
@@ -316,7 +316,7 @@ export default function User() {
         fullWidth
         maxWidth="xs"
       >
-        <DialogTitle id="alert-dialog-title" sx={{ position: 'relative' }} >Tạo nhân viên</DialogTitle>
+        <DialogTitle id="alert-dialog-title" sx={{ position: 'relative' }} >Tạo tài khoản nhân viên</DialogTitle>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
 
