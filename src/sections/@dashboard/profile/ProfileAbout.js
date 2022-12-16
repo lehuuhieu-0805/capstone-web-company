@@ -56,13 +56,15 @@ export default function ProfileAbout({ profile }) {
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Typography variant="body2">{profile.description}</Typography>
-        <Stack direction="row">
-          <IconStyle icon={'ic:school'} />
-          <Typography variant="body2">
-            Học tại {profile.education}
+        {profile.education !== '' ? (
+          <Stack direction="row">
+            <IconStyle icon={'ic:school'} />
+            <Typography variant="body2">
+              Học tại {profile.education}
 
-          </Typography>
-        </Stack>
+            </Typography>
+          </Stack>
+        ) : null}
         <Stack direction="row">
           <IconStyle icon={'eva:pin-fill'} />
           <Typography variant="body2">

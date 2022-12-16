@@ -254,10 +254,21 @@ export default function DetailJobPost() {
                   <CardContent>
                     <Grid item xs={12}>
                       <h4 style={{ marginRight: 10 }}>Kĩ năng:</h4>
-                      {skillDetail.map((element, index) => <Stack key={element.id} spacing={15} direction="row">
-                        <Typography variant="body2">•Ngôn ngữ: {element.skill}</Typography>
-                        <Typography variant="body2">Trình độ : {element.skillLevel}</Typography>
-                      </Stack>)}
+
+                      {skillDetail.map((element, index) => <Grid key={index} container spacing={0}>
+                        <Grid item xs={2}>
+                          <h4 style={{ fontWeight: 'normal' }}>Ngôn ngữ:</h4>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <h4 style={{ fontWeight: 'normal' }}>{element.skill}</h4>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <h4 style={{ fontWeight: 'normal' }}>Trình độ:</h4>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <h4 style={{ fontWeight: 'normal' }}>{element.skillLevel}</h4>
+                        </Grid>
+                      </Grid>)}
                     </Grid>
                   </CardContent>
                 </Card>
@@ -300,6 +311,6 @@ export default function DetailJobPost() {
           </>
         )}
       </Container>
-    </Page>
+    </Page >
   );
 }

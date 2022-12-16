@@ -11,8 +11,6 @@ import { api } from "../../../constants";
 import InfoProfileApplicant from "./InfoProfileApplicant";
 
 export default function TableApplicant(props) {
-  const token = localStorage.getItem('token');
-
   const [listProfileApplicant, setListProfileApplicant] = useState([]);
   const [listJobPosition, setListJobPosition] = useState([]);
   const [listWorkingStyle, setListWorkingStyle] = useState([]);

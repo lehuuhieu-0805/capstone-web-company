@@ -100,7 +100,8 @@ export default function CreateJobPost() {
 
   const getQueryParam = getQueryParams();
 
-  let { id } = useParams();
+  const { id } = useParams();
+  console.log(id);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -112,11 +113,11 @@ export default function CreateJobPost() {
     listSkillFilter = [];
   }, []);
 
-  useEffect(() => {
-    if (getQueryParam?.jobPostId) {
-      id = getQueryParam.jobPostId;
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (getQueryParam?.jobPostId) {
+  //     id = getQueryParam.jobPostId;
+  //   }
+  // }, []);
 
   const dispatch = useDispatch();
 
@@ -210,6 +211,13 @@ export default function CreateJobPost() {
         setTitle({
           key: 1,
           value: 'Chỉnh sửa bài viết tuyển dụng'
+        });
+      }
+
+      if (pathname.includes('/employee/job-post/create')) {
+        setTitle({
+          key: 0,
+          value: 'Tạo bài viết tuyển dụng'
         });
       }
 
@@ -431,6 +439,7 @@ export default function CreateJobPost() {
       //   Authorization: `Bearer ${token}`
       // }
     }).then((response) => {
+      const skill = response.data.data;
       axios({
         url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILLLEVEL}?skillGroupId=${response.data.data.skill_group_id}`,
         method: 'get',
@@ -443,6 +452,7 @@ export default function CreateJobPost() {
         }
         if (listSkillLevel[index]) {
           listSkillLevel[index].skillId = value.id;
+          listSkillLevel[index].skillName = skill.name;
           listSkillLevel[index].skillLevel = response.data.data;
 
         } else {
@@ -451,6 +461,7 @@ export default function CreateJobPost() {
             {
               index,
               skillId: value.id,
+              skillName: skill.name,
               skillLevel: response.data.data
             }
           ]));
@@ -1023,6 +1034,8 @@ export default function CreateJobPost() {
                             <MenuItem key={el.id} value={el.id} >{el.name}</MenuItem>
                           ))}
                         </Select> */}
+
+                        {console.log(listSkillLevel)}
 
                         <Autocomplete
                           value={listSkillLevel[index]?.skillName}

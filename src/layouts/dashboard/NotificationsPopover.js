@@ -4,6 +4,7 @@ import { noCase } from 'change-case';
 import { faker } from '@faker-js/faker';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 // @mui
 import {
   Box,
@@ -126,11 +127,11 @@ export default function NotificationsPopover() {
       if (role === 'COMPANY') {
         const noti = await onMessageListener();
         noti.notification.job_post_id = noti.data.jobPostId;
-        setListNoti((prev) => ([...prev, noti.notification]));
+        setListNoti((prev) => ([noti.notification, ...prev]));
       } else if (role === 'EMPLOYEE') {
         const noti = await onMessageListener();
         noti.notification.job_post_id = noti.data.jobPostId;
-        setListNoti((prev) => ([...prev, noti.notification]));
+        setListNoti((prev) => ([noti.notification, ...prev]));
       }
     })();
   }, [role, listNoti]);
@@ -231,6 +232,7 @@ NotificationItem.propTypes = {
 };
 
 function NotificationItem({ notification, handleClose }) {
+  const company = useSelector(state => state.companys);
   const navigate = useNavigate();
   const { avatar, title, body } = renderContent(notification);
 
@@ -250,7 +252,7 @@ function NotificationItem({ notification, handleClose }) {
       }}
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }} src='https://firebasestorage.googleapis.com/v0/b/captone-dfc3c.appspot.com/o/images%2F1668088254946.0776.jpg?alt=media&token=839fb24d-a21b-4979-80b2-00375f24f7a3' />
+        <Avatar sx={{ bgcolor: 'background.neutral' }} src={company.logo} />
       </ListItemAvatar>
       <ListItemText
         primary={title}

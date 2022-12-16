@@ -348,7 +348,7 @@ export default function TableListJobPost(props) {
                 {statusJobPost === 1 || statusJobPost === 3 ? (
                   <MenuItem onClick={() => {
                     setAnchorEl(null);
-                    navigate(`/employee/job-post/create?jobPostId=${jobPostId}`);
+                    navigate(`/employee/job-post/create/${jobPostId}`);
                   }} >
                     <Iconify icon='system-uicons:reuse' width={22} height={22} style={{ cursor: 'pointer', marginRight: 10 }} />
                     Sử dụng lại

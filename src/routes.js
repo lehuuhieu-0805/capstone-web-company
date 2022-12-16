@@ -43,35 +43,22 @@ function PrivateRoute() {
   return <Navigate to='/login' />;
 }
 
+function ProtectedRoute({ redirectPath }) {
+  const role = localStorage.getItem('role');
+  if (localStorage.getItem('token')) {
+    if (role === 'EMPLOYEE' && redirectPath === '/employee') {
+      return <DashboardLayout />;
+      // eslint-disable-next-line no-else-return
+    } else if (role === 'COMPANY' && redirectPath === '/company') {
+      return <DashboardLayout />;
+    }
+    return <Navigate to="/404" />;
+  }
+  return <Navigate to='/login' />;
+}
+
 export default function Router() {
   return useRoutes([
-    // {
-    //   path: '/dashboard',
-    //   element: <DashboardLayout />,
-    //   children: [
-    //     { path: 'app', element: <DashboardApp /> },
-    //     { path: 'employee', element: <User /> },
-    //     { path: 'products', element: <Products /> },
-    //     { path: 'blog', element: <Blog /> },
-    //     { path: 'profile', element: <Profile /> },
-    //     { path: 'job-post', element: <JobPost /> },
-    //     { path: 'productsdetail', element: <UserProfile /> },
-    //     { path: 'applyjob', element: <UserCard /> },
-    //     { path: 'profile-applicant', element: <ProfileApplicant /> },
-    //     { path: 'job-post/detail/:id', element: <DetailJobPost /> },
-    //     { path: 'change-password', element: <ChangePassword /> },
-    //     { path: 'deposit', element: <Deposit /> },
-    //     { path: 'block', element: <Block /> },
-    //     { path: 'job-post/create', element: <CreateJobPost /> },
-    //     { path: 'job-post/edit/:id', element: <CreateJobPost /> },
-    //     { path: 'job-post/create/:id', element: <CreateJobPost /> },
-    //     { path: 'history-matching', element: <HistoryMatching /> },
-    //     { path: 'history-transaction', element: <HistoryTransaction /> },
-    //     { path: 'create-company', element: <CreateCompany /> },
-    //     { path: 'show-information-create', element: <ShowInformationCreateCompany /> },
-    //     { path: 'show-information-join', element: <ShowInformationJoinCompany /> }
-    //   ],
-    // },
     {
       path: '/',
       element: <LogoOnlyLayout />,
@@ -87,20 +74,20 @@ export default function Router() {
     { path: '*', element: <Navigate to="/404" /> },
     {
       path: '/employee',
-      element: <DashboardLayout />,
+      element: <ProtectedRoute redirectPath='/employee' />,
       children: [
         { path: 'dashboard', element: <DashboardApp /> },
         { path: 'job-post', element: <JobPost /> },
         { path: 'job-post/detail/:id', element: <DetailJobPost /> },
+        { path: 'job-post/create/:id', element: <CreateJobPost /> },
         { path: 'job-post/create', element: <CreateJobPost /> },
         { path: 'job-post/edit/:id', element: <CreateJobPost /> },
-        { path: 'job-post/create/:id', element: <CreateJobPost /> },
         { path: 'information', element: <EmployeeInformation /> }
       ]
     },
     {
       path: '/company',
-      element: <DashboardLayout />,
+      element: <ProtectedRoute redirectPath='/company' />,
       children: [
         { path: 'dashboard', element: <DashboardApp /> },
         { path: 'employee', element: <User /> },

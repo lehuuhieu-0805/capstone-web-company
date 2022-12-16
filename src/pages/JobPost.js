@@ -452,7 +452,7 @@ export default function JobPost() {
     { value: 2, label: 'Đang đợi duyệt', color: 'success', count: lengthJobPostPending },
     { value: 4, label: 'Chờ hoạt động', color: 'success', count: lengthJobPostPosting },
     { value: 3, label: 'Từ chối', color: 'error', count: lengthJobPostCancel },
-    { value: 1, label: 'Đã ẩn', color: 'warning', count: lengthJobPostHidden },
+    { value: 1, label: 'Đã hết hạn', color: 'warning', count: lengthJobPostHidden },
   ];
 
   return (

@@ -34,7 +34,7 @@ export default function BankingBalanceStatistics({ title, subheader, chartLabels
     },
     tooltip: {
       y: {
-        formatter: (val) => `$${val}`,
+        formatter: (val) => `${val}`,
       },
     },
   });
@@ -44,27 +44,27 @@ export default function BankingBalanceStatistics({ title, subheader, chartLabels
       <CardHeader
         title={title}
         subheader={subheader}
-        // action={
-        //   <TextField
-        //     select
-        //     fullWidth
-        //     value={seriesData}
-        //     SelectProps={{ native: true }}
-        //     onChange={handleChangeSeriesData}
-        //     sx={{
-        //       '& fieldset': { border: '0 !important' },
-        //       '& select': { pl: 1, py: 0.5, pr: '24px !important', typography: 'subtitle2' },
-        //       '& .MuiOutlinedInput-root': { borderRadius: 0.75, bgcolor: 'background.neutral' },
-        //       '& .MuiNativeSelect-icon': { top: 4, right: 0, width: 20, height: 20 },
-        //     }}
-        //   >
-        //     {chartData.map((option) => (
-        //       <option key={option.year} value={option.year}>
-        //         {option.year}
-        //       </option>
-        //     ))}
-        //   </TextField>
-        // }
+      // action={
+      //   <TextField
+      //     select
+      //     fullWidth
+      //     value={seriesData}
+      //     SelectProps={{ native: true }}
+      //     onChange={handleChangeSeriesData}
+      //     sx={{
+      //       '& fieldset': { border: '0 !important' },
+      //       '& select': { pl: 1, py: 0.5, pr: '24px !important', typography: 'subtitle2' },
+      //       '& .MuiOutlinedInput-root': { borderRadius: 0.75, bgcolor: 'background.neutral' },
+      //       '& .MuiNativeSelect-icon': { top: 4, right: 0, width: 20, height: 20 },
+      //     }}
+      //   >
+      //     {chartData.map((option) => (
+      //       <option key={option.year} value={option.year}>
+      //         {option.year}
+      //       </option>
+      //     ))}
+      //   </TextField>
+      // }
       />
 
       {chartData.map((item) => (

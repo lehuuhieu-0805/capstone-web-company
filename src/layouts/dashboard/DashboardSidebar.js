@@ -77,7 +77,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
       case 'EMPLOYEE':
         navConfig = [
           {
-            title: 'dashboard',
+            title: 'Trang chủ',
             path: '/employee/dashboard',
             icon: getIcon('eva:pie-chart-2-fill'),
           },
@@ -91,7 +91,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
       case 'COMPANY':
         navConfig = [
           {
-            title: 'dashboard',
+            title: 'Trang chủ',
             path: '/company/dashboard',
             icon: getIcon('eva:pie-chart-2-fill'),
           },

@@ -91,7 +91,7 @@ export default function EmployeeTableRow({ row, onDeleteRow }) {
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle id="alert-dialog-title">Bạn có chắc chắn muốn xoá tài khoản  "{row.name}" ra khỏi công ty ?</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Bạn có chắc chắn muốn xoá tài khoản này ra khỏi công ty?</DialogTitle>
         <DialogActions>
           <Button onClick={handleCloseDialogDelete} variant="outlined">
             Huỷ
