@@ -328,7 +328,7 @@ export default function TableApplicant(props) {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setReloadData(!reloadData);
+    // setReloadData(!reloadData);
   };
 
   const handleDialog = (profileApplicantId) => {
