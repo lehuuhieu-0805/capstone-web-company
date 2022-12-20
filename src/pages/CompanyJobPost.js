@@ -340,7 +340,7 @@ export default function CompanyJobPost() {
         <HeaderBreadcrumbs
           heading="Bài viết tuyển dụng"
           links={[
-            { name: 'Trang chủ', href: 'PATH_DASHBOARD.general.one' },
+            { name: 'Trang chủ', href: '/company/dashboard' },
             { name: 'Bài viết tuyển dụng', href: ' ' },
           ]}
         />

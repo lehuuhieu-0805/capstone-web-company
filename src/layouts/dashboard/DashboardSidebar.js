@@ -62,6 +62,19 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
   const isDesktop = useResponsive('up', 'lg');
   const dispatch = useDispatch();
   const isPremium = useSelector(state => state.premiums);
+  const [upgradeFee, setUpgradeFee] = useState(0);
+
+  useEffect(() => {
+    axios({
+      url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_CONFIGURATION}`,
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then((response) => {
+      setUpgradeFee(response.data.upgrade);
+    }).catch(error => console.log(error));
+  }, [token]);
 
   useEffect(() => {
     if (isOpenSidebar) {
@@ -129,6 +142,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
   }, []);
 
   useEffect(() => {
+    console.log(company);
     if (company) {
       const action = updatePremium(company.is_premium);
       dispatch(action);
@@ -238,7 +252,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
         maxWidth="md"
       >
         <DialogTitle id="alert-dialog-title">
-          Bạn chắc chắn muốn nâng cấp tài khoản lên premium với phí là 5000 Tagent coin?
+          `Bạn chắc chắn muốn nâng cấp tài khoản lên premium với phí là {upgradeFee} Tagent coin?`
         </DialogTitle>
         <DialogContent>
           <Typography variant='subtitle1' gutterBottom>Khi bạn nâng cấp tài khoản lên premium:</Typography>
@@ -258,7 +272,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
               //   Authorization: `Bearer ${token}`,
               // }
             }).then((response) => {
-              if (response.data.data[0].balance < 5000) {
+              if (response.data.data[0].balance < upgradeFee) {
                 setSeverity('error');
                 setAlertMessage('Số dư trong ví không đủ để nâng cấp tài khoản');
                 setOpenAlert(true);
@@ -283,7 +297,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
                   setAlertMessage('Nâng cấp tài khoản thành công');
                   let action = updatePremium(true);
                   dispatch(action);
-                  action = minusMoney(5000);
+                  action = minusMoney(upgradeFee);
                   dispatch(action);
                 }).catch(error => {
                   console.log(error);
@@ -332,4 +346,4 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, compan
       )}
     </RootStyle>
   );
-}
+};

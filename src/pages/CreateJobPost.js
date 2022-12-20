@@ -582,7 +582,7 @@ export default function CreateJobPost() {
             setOpenAlert(true);
             setSeverity('success');
             setMessageAlert('Tạo bài viết tuyển dụng thành công');
-            navigate('/employee/job-post');
+            navigate('/employee/job-post?status=created');
           }).catch((error) => console.log(error));
         } else {
           const formData = new FormData();

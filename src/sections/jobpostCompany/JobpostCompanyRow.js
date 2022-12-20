@@ -82,6 +82,7 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
     setAnchorEl(null);
   };
   useEffect(() => {
+    setSkillDetail([]);
     row.job_post_skills.map((jobPostSkill) => axios({
       url: `${api.baseUrl}/${api.configPathType.api}/${api.versionType.v1}/${api.GET_SKILL}/${jobPostSkill.skill_id}`,
       method: 'get',
@@ -506,13 +507,28 @@ export default function JobpostComanyTableRow({ row, onDeleteRow, onError, onRej
                   <CardHeader title="Kỹ năng yêu cầu" />
 
                   <Stack spacing={2} sx={{ p: 3 }}>
-                    {skillDetail &&
+                    {/* {skillDetail &&
                       skillDetail.map((element) => (
                         <Stack key={element.id} spacing={15} direction="row">
                           <Typography variant="body2">-Ngôn ngữ: {element.skill}</Typography>
                           <Typography variant="body2">Trình độ : {element.skillLevel}</Typography>
                         </Stack>
-                      ))}
+                      ))} */}
+                    {skillDetail && skillDetail.map((element, index) => <Grid key={index} container spacing={0}>
+                      <Grid item xs={2}>
+                        <h4 style={{ fontWeight: 'normal' }}>Ngôn ngữ:</h4>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <h4 style={{ fontWeight: 'normal' }}>{element.skill}</h4>
+                      </Grid>
+                      <Grid item xs={2}>
+                        <h4 style={{ fontWeight: 'normal' }}>Trình độ:</h4>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <h4 style={{ fontWeight: 'normal' }}>{element.skillLevel}</h4>
+                      </Grid>
+                    </Grid>)}
+
                   </Stack>
                 </Card>
               </Stack>

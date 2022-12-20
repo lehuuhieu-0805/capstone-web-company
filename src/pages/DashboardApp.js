@@ -140,27 +140,64 @@ export default function DashboardApp() {
   }, []);
 
   const getAll = async () => {
-
     await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-1, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().format('YYYY-MM-DD')}`,
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-9, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-8, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
       method: 'get',
     })
       .then((response) => {
         day0.push(response.data);
         // console.log(response)
-
       })
       .catch((error) => console.log(error));
+
     await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-2, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-1, 'day').format('YYYY-MM-DD')}`,
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-8, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-7, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
       method: 'get',
     })
       .then((response) => {
         day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+
+    await axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-7, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-6, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
       })
       .catch((error) => console.log(error));
     await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-3, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-2, 'day').format('YYYY-MM-DD')}`,
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-6, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-5, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+    await axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-5, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-4, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+    await axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-4, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-3, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
+      })
+      .catch((error) => console.log(error));
+    await axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-3, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-2, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
       method: 'get',
     })
       .then((response) => {
@@ -169,62 +206,24 @@ export default function DashboardApp() {
 
       })
       .catch((error) => console.log(error));
+    await axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-2, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().add(-1, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+      })
+      .catch((error) => console.log(error));
+    await axios({
+      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-1, 'day').format('YYYY-MM-DD HH:mm:ss.SSS')}&toDate=${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}`,
+      method: 'get',
+    })
+      .then((response) => {
+        day0.push(response.data);
+        // console.log(response)
 
-    await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-4, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-3, 'day').format('YYYY-MM-DD')}`,
-      method: 'get',
-    })
-      .then((response) => {
-        day0.push(response.data);
-        // console.log(response)
       })
       .catch((error) => console.log(error));
-    await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-5, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-4, 'day').format('YYYY-MM-DD')}`,
-      method: 'get',
-    })
-      .then((response) => {
-        day0.push(response.data);
-        // console.log(response)
-      })
-      .catch((error) => console.log(error));
-    await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-6, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-5, 'day').format('YYYY-MM-DD')}`,
-      method: 'get',
-    })
-      .then((response) => {
-        day0.push(response.data);
-        // console.log(response)
-      })
-      .catch((error) => console.log(error));
-    await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-7, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-6, 'day').format('YYYY-MM-DD')}`,
-      method: 'get',
-    })
-      .then((response) => {
-        day0.push(response.data);
-        // console.log(response)
-      })
-      .catch((error) => console.log(error));
-    await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-8, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-7, 'day').format('YYYY-MM-DD')}`,
-      method: 'get',
-    })
-      .then((response) => {
-        day0.push(response.data);
-        // console.log(response)
-      })
-      .catch((error) => console.log(error));
-    await axios({
-      url: `https://stg-api-itjob.unicode.edu.vn/api/v1/likes/company-date?companyId=${localStorage.getItem('company_id')}&fromDate=${dayjs().add(-9, 'day').format('YYYY-MM-DD')}&toDate=${dayjs().add(-8, 'day').format('YYYY-MM-DD')}`,
-      method: 'get',
-    })
-      .then((response) => {
-        day0.push(response.data);
-        // console.log(response)
-      })
-      .catch((error) => console.log(error));
-
     setLoadingData(false);
   };
 

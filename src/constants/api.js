@@ -106,3 +106,6 @@ export const POST_UNSUBSCRIBE_TOPIC = 'notis/unsubscribe';
 // employee
 export const GET_EMPLOYEE = 'employees';
 export const PUT_EMPLOYEE = 'employees';
+
+// configuration
+export const GET_CONFIGURATION = 'configurations';
