@@ -80,7 +80,7 @@ export default function DashboardNavbar({ onOpenSidebar, company }) {
               <>
                 <Iconify icon='dashicons:money-alt' color='#2065D1' sx={{ width: 30, height: 30 }} />
                 <Typography color='#2065D1' variant='h5' gutterBottom>{money}</Typography>
-                <Button color='secondary' variant='contained' onClick={() => navigate('/dashboard/deposit')}>Nạp tiền</Button>
+                <Button color='secondary' variant='contained' onClick={() => navigate('/company/deposit')}>Nạp tiền</Button>
                 {/* <LanguagePopover /> */}
               </>
             )}
